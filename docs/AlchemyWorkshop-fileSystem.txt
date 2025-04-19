@@ -1,0 +1,181 @@
+alchemy_workshop/
+│
+├── .gitignore                      # Git ignore file
+├── .gitattributes                  # Git attributes file
+├── project.godot                   # Main Godot project file
+├── export_presets.cfg              # Export configurations
+│
+├── addons/                         # Third-party plugins
+│   ├── admob/                      # Ad implementation
+│   ├── google_play_services/       # Google Play integration
+│   ├── ios_services/               # iOS integration
+│   └── save_system/                # Cloud save functionality
+│
+├── assets/                         # All game assets
+│   ├── audio/                      # Audio files
+│   │   ├── music/                  # Background music
+│   │   │   ├── ambient_workshop.ogg
+│   │   │   ├── spring_theme.ogg
+│   │   │   ├── summer_theme.ogg
+│   │   │   ├── autumn_theme.ogg
+│   │   │   └── winter_theme.ogg
+│   │   ├── sfx/                    # Sound effects
+│   │   │   ├── brewing/            # Brewing sounds
+│   │   │   ├── gathering/          # Gathering sounds
+│   │   │   ├── ui/                 # UI interaction sounds
+│   │   │   └── villager/           # Villager expressions
+│   │   └── audio_bus_layout.tres   # Audio mixer configuration
+│   │
+│   ├── fonts/                      # Game fonts
+│   │   ├── main_font.ttf
+│   │   └── decorative_font.ttf
+│   │
+│   ├── images/                     # Visual assets
+│   │   ├── ingredients/            # Ingredient icons
+│   │   │   ├── common_plants/      # Common plant ingredients
+│   │   │   ├── mineral_elements/   # Mineral ingredients
+│   │   │   ├── animal_products/    # Animal product ingredients
+│   │   │   └── special_elements/   # Special ingredients
+│   │   ├── potions/                # Potion visuals
+│   │   │   ├── healing/
+│   │   │   ├── utility/
+│   │   │   ├── transformation/
+│   │   │   └── mind/
+│   │   ├── workshop/               # Workshop visuals
+│   │   │   ├── stations/           # Brewing stations
+│   │   │   ├── themes/             # Workshop themes (monetizable)
+│   │   │   └── decorations/        # Workshop decorations
+│   │   ├── villagers/              # Villager portraits
+│   │   ├── ui/                     # UI elements
+│   │   │   ├── buttons/
+│   │   │   ├── icons/
+│   │   │   ├── panels/
+│   │   │   └── progress_bars/
+│   │   └── particles/              # Particle effect textures
+│   │
+│   └── animations/                 # Animation resources
+│       ├── brewing_effects/
+│       ├── gathering_effects/
+│       └── ui_animations/
+│
+├── data/                           # Game data files
+│   ├── ingredients.json            # Ingredient definitions
+│   ├── recipes.json                # Recipe definitions
+│   ├── villagers.json              # Villager data
+│   ├── quests.json                 # Villager quest chains
+│   ├── specializations.json        # Specialization paths
+│   ├── upgrades.json               # Workshop upgrades
+│   ├── seasonal_events.json        # Seasonal event data
+│   └── challenges.json             # Special challenge data
+│
+├── scenes/                         # Game scenes
+│   ├── main.tscn                   # Main game scene
+│   ├── main.gd                     # Main game script
+│   │
+│   ├── ui/                         # UI scenes
+│   │   ├── main_menu.tscn          # Main menu
+│   │   ├── main_menu.gd
+│   │   ├── hud.tscn                # In-game HUD
+│   │   ├── hud.gd
+│   │   ├── recipe_book.tscn        # Recipe book interface
+│   │   ├── recipe_book.gd
+│   │   ├── inventory.tscn          # Inventory interface
+│   │   ├── inventory.gd
+│   │   ├── villager_panel.tscn     # Villager interaction panel
+│   │   ├── villager_panel.gd
+│   │   ├── shop.tscn               # Shop interface
+│   │   ├── shop.gd
+│   │   ├── settings.tscn           # Settings menu
+│   │   ├── settings.gd
+│   │   └── tutorial.tscn           # Tutorial system
+│   │
+│   ├── workshop/                   # Workshop scenes
+│   │   ├── workshop_main.tscn      # Main workshop view
+│   │   ├── workshop_main.gd
+│   │   ├── cauldron.tscn           # Cauldron station
+│   │   ├── cauldron.gd
+│   │   ├── distillery.tscn         # Distillery station
+│   │   ├── distillery.gd
+│   │   ├── herb_station.tscn       # Herb processing station
+│   │   ├── herb_station.gd
+│   │   ├── study_table.tscn        # Recipe research station
+│   │   └── study_table.gd
+│   │
+│   ├── gathering/                  # Gathering scenes
+│   │   ├── garden.tscn             # Garden gathering area
+│   │   ├── garden.gd
+│   │   ├── forest_edge.tscn        # Forest gathering area
+│   │   ├── forest_edge.gd
+│   │   ├── resource_node.tscn      # Generic resource node
+│   │   └── resource_node.gd
+│   │
+│   ├── villagers/                  # Villager scenes
+│   │   ├── villager_base.tscn      # Base villager template
+│   │   ├── villager_base.gd
+│   │   ├── farmer_giles.tscn       # Individual villager scenes
+│   │   ├── blacksmith_hilda.tscn
+│   │   └── [other villagers].tscn
+│   │
+│   └── events/                     # Event scenes
+│       ├── seasonal_event.tscn     # Base seasonal event
+│       ├── seasonal_event.gd
+│       ├── village_crisis.tscn     # Village crisis event
+│       └── competition.tscn        # Alchemical competition
+│
+├── scripts/                        # Global scripts
+│   ├── autoload/                   # Autoloaded singletons
+│   │   ├── game_manager.gd         # Main game manager
+│   │   ├── save_manager.gd         # Save system
+│   │   ├── audio_manager.gd        # Audio controller
+│   │   ├── recipe_manager.gd       # Recipe management
+│   │   ├── inventory_manager.gd    # Inventory management
+│   │   ├── villager_manager.gd     # Villager management
+│   │   └── event_manager.gd        # Event management
+│   │
+│   ├── resources/                  # Resource scripts
+│   │   ├── ingredient.gd           # Ingredient class
+│   │   ├── potion.gd               # Potion class
+│   │   ├── recipe.gd               # Recipe class
+│   │   ├── villager.gd             # Villager class
+│   │   ├── quest.gd                # Quest class
+│   │   └── specialization.gd       # Specialization class
+│   │
+│   ├── systems/                    # Game systems
+│   │   ├── brewing_system.gd       # Brewing mechanics
+│   │   ├── experimental_brewing.gd # Experimental brewing
+│   │   ├── gathering_system.gd     # Gathering mechanics
+│   │   ├── reputation_system.gd    # Villager relationships
+│   │   ├── progression_system.gd   # Player progression
+│   │   ├── economy_system.gd       # Game economy
+│   │   ├── prestige_system.gd      # Knowledge reset system
+│   │   └── notification_system.gd  # Notifications
+│   │
+│   └── utility/                    # Utility scripts
+│       ├── data_loader.gd          # JSON data loading
+│       ├── time_manager.gd         # Time management
+│       ├── random_generator.gd     # RNG with seeds
+│       └── analytics.gd            # Analytics tracking
+│
+├── resources/                      # Resource files
+│   ├── themes/                     # UI themes
+│   │   ├── main_theme.tres         # Main UI theme
+│   │   └── popup_theme.tres        # Popup UI theme
+│   │
+│   ├── shaders/                    # Shader resources
+│   │   ├── potion_liquid.gdshader  # Potion liquid shader
+│   │   └── particle_effects.gdshader # Particle effects
+│   │
+│   └── presets/                    # Preset configurations
+│       ├── default_settings.tres   # Default game settings
+│       └── difficulty_presets.tres # Difficulty settings
+│
+├── localization/                   # Language files
+│   ├── translations.csv            # Translation strings
+│   └── localization.en.translation # Compiled translations
+│
+└── docs/                           # Documentation
+    ├── gdd.md                      # Game Design Document
+    ├── development_roadmap.md      # Development Roadmap
+    ├── code_guidelines.md          # Coding standards
+    ├── asset_guidelines.md         # Asset creation guidelines
+    └── analytics_plan.md           # Analytics implementation
