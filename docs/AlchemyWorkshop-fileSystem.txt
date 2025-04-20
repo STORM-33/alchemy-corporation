@@ -174,8 +174,8 @@ alchemy_workshop/
 │   └── localization.en.translation # Compiled translations
 │
 └── docs/                           # Documentation
-    ├── gdd.md                      # Game Design Document
-    ├── development_roadmap.md      # Development Roadmap
-    ├── code_guidelines.md          # Coding standards
-    ├── asset_guidelines.md         # Asset creation guidelines
-    └── analytics_plan.md           # Analytics implementation
+	├── gdd.md                      # Game Design Document
+	├── development_roadmap.md      # Development Roadmap
+	├── code_guidelines.md          # Coding standards
+	├── asset_guidelines.md         # Asset creation guidelines
+	└── analytics_plan.md           # Analytics implementation

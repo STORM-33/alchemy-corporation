@@ -1,0 +1,100 @@
+[gd_scene load_steps=2 format=3 uid="uid://o5ersrlm325s"]
+
+[ext_resource type="Script" uid="uid://pl1k2xqks1kb" path="res://scenes/ui/hud.gd" id="1_0mwgc"]
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_0mwgc")
+
+[node name="TopBar" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Resources" type="HBoxContainer" parent="TopBar"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GoldPanel" type="Panel" parent="TopBar/Resources"]
+layout_mode = 2
+
+[node name="GoldIcon" type="TextureRect" parent="TopBar/Resources/GoldPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GoldLabel" type="Label" parent="TopBar/Resources/GoldPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="EssencePanel" type="Panel" parent="TopBar/Resources"]
+layout_mode = 2
+
+[node name="EssenceIcon" type="TextureRect" parent="TopBar/Resources/EssencePanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="EssenceLabel" type="Label" parent="TopBar/Resources/EssencePanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="PLayerInfo" type="HBoxContainer" parent="TopBar"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="PlayerIcon" type="TextureRect" parent="TopBar/PLayerInfo"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="TopBar/PLayerInfo"]
+layout_mode = 2
+
+[node name="BottomBar" type="Panel" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InventoryButton" type="TextureButton" parent="BottomBar"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RecipeButton" type="TextureButton" parent="BottomBar"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="NavButtons" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="WorkshopButton" type="TextureButton" parent="BottomBar/NavButtons"]
+layout_mode = 2
+
+[node name="GardenButton" type="TextureButton" parent="BottomBar/NavButtons"]
+layout_mode = 2
+
+[node name="ForestButton" type="TextureButton" parent="BottomBar/NavButtons"]
+layout_mode = 2
+
+[node name="NotificationArea" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="InventoryPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RecipeBookPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

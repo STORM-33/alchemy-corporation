@@ -1,0 +1,75 @@
+[gd_scene load_steps=2 format=3 uid="uid://0ga15t3y2fvk"]
+
+[ext_resource type="Script" uid="uid://dav31jiytfad0" path="res://inventory_pannel.gd" id="1_7ck5g"]
+
+[node name="InventoryPanel" type="Panel"]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_7ck5g")
+
+[node name="HeaderLabel" type="Label" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="CloseButton" type="TextureButton" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+current_tab = 0
+
+[node name="Ingradients" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="FilterOptions" type="HBoxContainer" parent="TabContainer/Ingradients"]
+layout_mode = 2
+
+[node name="ItemGrid" type="GridContainer" parent="TabContainer/Ingradients"]
+layout_mode = 2
+
+[node name="Potions" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="FilterOptions" type="HBoxContainer" parent="TabContainer/Potions"]
+layout_mode = 2
+
+[node name="ItemGrid" type="GridContainer" parent="TabContainer/Potions"]
+layout_mode = 2
+
+[node name="ItemInfoPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ItemIcon" type="TextureRect" parent="ItemInfoPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ItemName" type="Label" parent="ItemInfoPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ItemDescription" type="Label" parent="ItemInfoPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 23.0
+
+[node name="ItemProperties" type="VBoxContainer" parent="ItemInfoPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ActionButtons" type="HBoxContainer" parent="ItemInfoPanel"]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0

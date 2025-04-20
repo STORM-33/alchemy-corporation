@@ -1,0 +1,30 @@
+[gd_scene load_steps=2 format=3 uid="uid://dphem05u2d156"]
+
+[ext_resource type="Script" uid="uid://bf2qn2vyki1w" path="res://scenes/workshop/cauldron.gd" id="1_l16ud"]
+
+[node name="Cauldron" type="Node2D"]
+script = ExtResource("1_l16ud")
+
+[node name="CauldronBase" type="Sprite2D" parent="."]
+
+[node name="BrewingParticles" type="CPUParticles2D" parent="."]
+
+[node name="BrewingTimer" type="Timer" parent="."]
+
+[node name="IngredientSlots" type="Node2D" parent="."]
+
+[node name="Slot1" type="TextureRect" parent="IngredientSlots"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Slot2" type="TextureRect" parent="IngredientSlots"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Slot3" type="TextureRect" parent="IngredientSlots"]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Slot4" type="TextureRect" parent="IngredientSlots"]
+offset_right = 40.0
+offset_bottom = 40.0

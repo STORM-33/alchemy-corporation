@@ -197,9 +197,9 @@ Minimalist but expressive design using:
    - Favorite Potions: Mood enhancers, flavor extracts
 
 10. **Mysterious Stranger** (Black, question mark icon)
-    - Storyline: Recurring visitor with unknown motives
-    - Quest Chain: Create increasingly complex potions for enigmatic purposes
-    - Favorite Potions: Transformation elixirs, experimental brews
+	- Storyline: Recurring visitor with unknown motives
+	- Quest Chain: Create increasingly complex potions for enigmatic purposes
+	- Favorite Potions: Transformation elixirs, experimental brews
 
 ## 4. Experimental Brewing System
 
