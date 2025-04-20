@@ -72,57 +72,57 @@ onready var _audio_player = $AudioStreamPlayer
 
 # Lifecycle methods
 func _ready():
-    _initialize_cauldron()
-    
+	_initialize_cauldron()
+	
 func _process(delta):
-    if _brewing_in_progress:
-        _update_brewing(delta)
+	if _brewing_in_progress:
+		_update_brewing(delta)
 
 # Signal handlers
 func _on_ingredient_dropped(ingredient_data):
-    add_ingredient(ingredient_data)
+	add_ingredient(ingredient_data)
 
 # Public methods
 func add_ingredient(ingredient_data):
-    if _current_ingredients.size() >= MAX_INGREDIENTS:
-        return false
-    _current_ingredients.append(ingredient_data)
-    return true
+	if _current_ingredients.size() >= MAX_INGREDIENTS:
+		return false
+	_current_ingredients.append(ingredient_data)
+	return true
 
 func start_brewing():
-    if _current_ingredients.empty():
-        return false
-    
-    _brewing_in_progress = true
-    _brewing_timer = BREWING_BASE_TIME * time_multiplier
-    emit_signal("brewing_started", _get_potential_recipe_name())
-    _particle_effect.emitting = true
-    _audio_player.play()
-    return true
+	if _current_ingredients.empty():
+		return false
+	
+	_brewing_in_progress = true
+	_brewing_timer = BREWING_BASE_TIME * time_multiplier
+	emit_signal("brewing_started", _get_potential_recipe_name())
+	_particle_effect.emitting = true
+	_audio_player.play()
+	return true
 
 # Private methods
 func _initialize_cauldron():
-    _particle_effect.emitting = false
+	_particle_effect.emitting = false
 
 func _update_brewing(delta):
-    _brewing_timer -= delta
-    if _brewing_timer <= 0:
-        _complete_brewing()
+	_brewing_timer -= delta
+	if _brewing_timer <= 0:
+		_complete_brewing()
 
 func _complete_brewing():
-    _brewing_in_progress = false
-    _particle_effect.emitting = false
-    var result = _calculate_brewing_result()
-    emit_signal("brewing_completed", result.name, result.quality)
-    _current_ingredients.clear()
+	_brewing_in_progress = false
+	_particle_effect.emitting = false
+	var result = _calculate_brewing_result()
+	emit_signal("brewing_completed", result.name, result.quality)
+	_current_ingredients.clear()
 
 func _calculate_brewing_result():
-    # Implementation details
-    return { "name": "Health Potion", "quality": 1 }
+	# Implementation details
+	return { "name": "Health Potion", "quality": 1 }
 
 func _get_potential_recipe_name():
-    # Implementation details
-    return "Unknown Concoction"
+	# Implementation details
+	return "Unknown Concoction"
 ```
 
 ### Resource Loading
@@ -215,8 +215,8 @@ Document public functions and complex private functions:
 ## - ingredients: Array of ingredient IDs to combine
 ## - brewing_method: String indicating brewing method (careful, standard, rapid)
 func combine_ingredients(ingredients, brewing_method):
-    # Implementation
-    return result
+	# Implementation
+	return result
 ```
 
 ### Type Hints
@@ -225,7 +225,7 @@ Use GDScript type hints for clarity and editor assistance:
 
 ```gdscript
 func calculate_potion_quality(base_quality: int, ingredient_freshness: float) -> int:
-    return int(base_quality * ingredient_freshness)
+	return int(base_quality * ingredient_freshness)
 ```
 
 ### Data Structure Comments
@@ -260,23 +260,23 @@ const POOL_SIZE = 20
 var _potion_pool = []
 
 func _ready():
-    # Populate pool
-    for i in range(POOL_SIZE):
-        var potion = POTION_SCENE.instance()
-        potion.visible = false
-        add_child(potion)
-        _potion_pool.append(potion)
+	# Populate pool
+	for i in range(POOL_SIZE):
+		var potion = POTION_SCENE.instance()
+		potion.visible = false
+		add_child(potion)
+		_potion_pool.append(potion)
 
 func get_potion_from_pool():
-    for potion in _potion_pool:
-        if not potion.visible:
-            potion.visible = true
-            return potion
-    # If no available potions, create new one
-    var new_potion = POTION_SCENE.instance()
-    add_child(new_potion)
-    _potion_pool.append(new_potion)
-    return new_potion
+	for potion in _potion_pool:
+		if not potion.visible:
+			potion.visible = true
+			return potion
+	# If no available potions, create new one
+	var new_potion = POTION_SCENE.instance()
+	add_child(new_potion)
+	_potion_pool.append(new_potion)
+	return new_potion
 ```
 
 ### Data Management
@@ -290,23 +290,23 @@ Example of lazy loading ingredients by category:
 var _loaded_categories = {}
 
 func get_ingredients_by_category(category):
-    if not _loaded_categories.has(category):
-        var file_path = "res://data/ingredients_%s.json" % category
-        var file = File.new()
-        if file.file_exists(file_path):
-            file.open(file_path, File.READ)
-            var json = JSON.parse(file.get_as_text())
-            file.close()
-            if json.error == OK:
-                _loaded_categories[category] = json.result
-            else:
-                push_error("Failed to parse ingredients JSON: %s" % category)
-                _loaded_categories[category] = []
-        else:
-            push_error("Missing ingredients file: %s" % file_path)
-            _loaded_categories[category] = []
-    
-    return _loaded_categories[category]
+	if not _loaded_categories.has(category):
+		var file_path = "res://data/ingredients_%s.json" % category
+		var file = File.new()
+		if file.file_exists(file_path):
+			file.open(file_path, File.READ)
+			var json = JSON.parse(file.get_as_text())
+			file.close()
+			if json.error == OK:
+				_loaded_categories[category] = json.result
+			else:
+				push_error("Failed to parse ingredients JSON: %s" % category)
+				_loaded_categories[category] = []
+		else:
+			push_error("Missing ingredients file: %s" % file_path)
+			_loaded_categories[category] = []
+	
+	return _loaded_categories[category]
 ```
 
 ### Timing and Processing
@@ -319,17 +319,17 @@ func get_ingredients_by_category(category):
 Example of timer usage:
 ```gdscript
 func start_ingredient_regeneration(ingredient_id):
-    var regen_data = _ingredient_regen_times[ingredient_id]
-    var timer = Timer.new()
-    timer.wait_time = regen_data.base_time * _regen_time_multiplier
-    timer.one_shot = true
-    timer.connect("timeout", self, "_on_regeneration_complete", [ingredient_id, timer])
-    add_child(timer)
-    timer.start()
+	var regen_data = _ingredient_regen_times[ingredient_id]
+	var timer = Timer.new()
+	timer.wait_time = regen_data.base_time * _regen_time_multiplier
+	timer.one_shot = true
+	timer.connect("timeout", self, "_on_regeneration_complete", [ingredient_id, timer])
+	add_child(timer)
+	timer.start()
 
 func _on_regeneration_complete(ingredient_id, timer):
-    _respawn_ingredient(ingredient_id)
-    timer.queue_free()
+	_respawn_ingredient(ingredient_id)
+	timer.queue_free()
 ```
 
 ## Versioning and Git Workflow
@@ -403,11 +403,11 @@ Example unit test:
 extends "res://addons/gut/test.gd"
 
 func test_potion_creation():
-    var brewing_system = BrewingSystem.new()
-    var ingredients = ["lavender", "quartz_dust", "pure_water"]
-    var result = brewing_system.combine_ingredients(ingredients, "standard")
-    assert_true(result.success, "Should successfully create a potion")
-    assert_eq(result.potion.name, "Clarity Potion", "Should create a Clarity Potion")
+	var brewing_system = BrewingSystem.new()
+	var ingredients = ["lavender", "quartz_dust", "pure_water"]
+	var result = brewing_system.combine_ingredients(ingredients, "standard")
+	assert_true(result.success, "Should successfully create a potion")
+	assert_eq(result.potion.name, "Clarity Potion", "Should create a Clarity Potion")
 ```
 
 ### Test Checklist
@@ -433,14 +433,14 @@ Use Godot's OS class to adapt to different platforms:
 
 ```gdscript
 func _ready():
-    if OS.get_name() == "Android" or OS.get_name() == "iOS":
-        _configure_mobile_settings()
-    else:
-        _configure_desktop_settings()
+	if OS.get_name() == "Android" or OS.get_name() == "iOS":
+		_configure_mobile_settings()
+	else:
+		_configure_desktop_settings()
 
 func _configure_mobile_settings():
-    $UI/Buttons.rect_min_size = Vector2(120, 120)  # Larger buttons for touch
-    Engine.target_fps = 30  # Lower FPS to save battery
+	$UI/Buttons.rect_min_size = Vector2(120, 120)  # Larger buttons for touch
+	Engine.target_fps = 30  # Lower FPS to save battery
 ```
 
 ### Input Handling
@@ -449,18 +449,18 @@ Adapt input handling based on platform:
 
 ```gdscript
 func _input(event):
-    if event is InputEventScreenTouch and event.pressed:
-        _handle_touch(event.position)
-    elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
-        _handle_click(event.position)
+	if event is InputEventScreenTouch and event.pressed:
+		_handle_touch(event.position)
+	elif event is InputEventMouseButton and event.button_index == BUTTON_LEFT and event.pressed:
+		_handle_click(event.position)
 
 func _handle_touch(position):
-    # Mobile-specific touch handling
-    pass
+	# Mobile-specific touch handling
+	pass
 
 func _handle_click(position):
-    # Desktop-specific click handling
-    pass
+	# Desktop-specific click handling
+	pass
 ```
 
 ## Asset Integration
@@ -483,9 +483,9 @@ Use dynamic paths for loading assets when appropriate:
 
 ```gdscript
 func load_ingredient_texture(ingredient_id):
-    var category = _get_ingredient_category(ingredient_id)
-    var path = "res://assets/images/ingredients/%s/%s.png" % [category, ingredient_id]
-    return load(path)
+	var category = _get_ingredient_category(ingredient_id)
+	var path = "res://assets/images/ingredients/%s/%s.png" % [category, ingredient_id]
+	return load(path)
 ```
 
 ## Accessibility
@@ -509,10 +509,10 @@ Implement UI scaling for different device sizes and accessibility needs:
 var ui_scale = 1.0
 
 func set_ui_scale(scale):
-    ui_scale = scale
-    $UI.rect_scale = Vector2(scale, scale)
-    # Adjust positions to compensate for scaling
-    # ...
+	ui_scale = scale
+	$UI.rect_scale = Vector2(scale, scale)
+	# Adjust positions to compensate for scaling
+	# ...
 ```
 
 ### Font Size Options
@@ -521,18 +521,18 @@ Allow players to adjust text size:
 
 ```gdscript
 func set_font_size(size_option):
-    var sizes = {
-        "small": 14,
-        "medium": 18,
-        "large": 24,
-        "extra_large": 32
-    }
-    
-    var theme = $UI.theme.duplicate()
-    var font = theme.get_font("font", "Label").duplicate()
-    font.size = sizes[size_option]
-    theme.set_font("font", "Label", font)
-    $UI.theme = theme
+	var sizes = {
+		"small": 14,
+		"medium": 18,
+		"large": 24,
+		"extra_large": 32
+	}
+	
+	var theme = $UI.theme.duplicate()
+	var font = theme.get_font("font", "Label").duplicate()
+	font.size = sizes[size_option]
+	theme.set_font("font", "Label", font)
+	$UI.theme = theme
 ```
 
 ## Conclusion

@@ -11,5 +11,13 @@ config_version=5
 [application]
 
 config/name="Alchemy Workshop"
+run/main_scene="uid://disk1657twksg"
 config/features=PackedStringArray("4.4", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+GameManager="*res://scripts/autoload/game-manager.gd"
+IngredientManager="*res://scripts/autoload/ingredient-manager.gd"
+InventoryManager="*res://scripts/autoload/inventory-manager.gd"
+GatheringSystem="*res://scripts/autoload/gathering-system.gd"
