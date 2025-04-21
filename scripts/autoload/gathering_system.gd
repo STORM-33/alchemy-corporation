@@ -60,13 +60,13 @@ func spawn_resource(resource_id, area_id):
 	var node_id = resource_id + "_" + str(Time.get_unix_time_from_system()) + "_" + str(randi())
 	
 	# Create resource node instance
-	var resource_node_instance = RESOURCE_NODE_SCENE.instance()
+	var resource_node_instance = RESOURCE_NODE_SCENE.instantiate()
 	resource_node_instance.position = spawn_position
 	resource_node_instance.resource_id = resource_id
 	resource_node_instance.node_id = node_id
 	
 	# Connect signals
-	resource_node_instance.connect("resource_gathered", self, "_on_resource_gathered")
+	resource_node_instance.resource_gathered.connect(_on_resource_gathered)
 	
 	# Store in active nodes
 	_active_nodes[node_id] = {
@@ -80,7 +80,7 @@ func spawn_resource(resource_id, area_id):
 	if gathering_area:
 		gathering_area.add_child(resource_node_instance)
 	
-	emit_signal("resource_spawned", resource_id, node_id)
+	resource_spawned.emit(resource_id, node_id)
 	return node_id
 
 func gather_resource(node_id):
@@ -106,7 +106,7 @@ func gather_resource(node_id):
 	_start_regeneration_timer(resource_id, node_id, node_data.area_id, node_data.position)
 	
 	# Signal the gather
-	emit_signal("resource_gathered", resource_id, quantity, quality)
+	resource_gathered.emit(resource_id, quantity, quality)
 	
 	return {
 		"success": true,
@@ -235,7 +235,7 @@ func _start_regeneration_timer(resource_id, node_id, area_id, position):
 	# Start the timer
 	timer.start()
 	
-	emit_signal("resource_regeneration_started", resource_id, regen_time)
+	resource_regeneration_started.emit(resource_id, regen_time)
 
 func _on_regeneration_complete(resource_id, area_id, position, timer):
 	"""Called when a resource has finished regenerating"""
@@ -249,7 +249,7 @@ func _on_regeneration_complete(resource_id, area_id, position, timer):
 	# Spawn new resource
 	var new_node_id = spawn_resource(resource_id, area_id)
 	
-	emit_signal("resource_regeneration_complete", resource_id, new_node_id)
+	resource_regeneration_complete.emit(resource_id, new_node_id)
 
 func _on_resource_gathered(node_id):
 	"""Called when a resource is gathered by player interaction"""

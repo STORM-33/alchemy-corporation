@@ -16,7 +16,7 @@ signal resource_clicked(node_id)
 @export var auto_setup: bool = true  # Whether to automatically configure on ready
 
 # Node references
-@onready var _sprite = $Sprite2D  # Updated to Sprite2D in Godot 4
+@onready var _sprite = $Sprite2D
 @onready var _animation_player = $AnimationPlayer
 @onready var _collision_shape = $CollisionShape2D
 @onready var _particle_effect = $GatherParticles
@@ -260,8 +260,8 @@ func _on_input_event(_viewport, event, _shape_idx):
 		return
 	
 	# Check for mouse/touch interactions
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:  # Changed from BUTTON_LEFT
-		resource_clicked.emit(node_id)  # Changed from emit_signal
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		resource_clicked.emit(node_id)
 		gather()
 	# For highlight on hover, could add InputEventMouseMotion handling here
 
@@ -272,7 +272,7 @@ func _on_animation_finished(anim_name):
 
 func _complete_gathering():
 	"""Completes the gathering process and emits the signal"""
-	resource_gathered.emit(node_id)  # Changed from emit_signal
+	resource_gathered.emit(node_id)
 	
 	# Queue this node for deletion
 	queue_free()

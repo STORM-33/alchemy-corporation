@@ -20,8 +20,8 @@ var _inventory_upgrades = 0
 # Lifecycle methods
 func _ready():
 	# Register with GameManager
-	if GameManager:
-		GameManager.inventory_manager = self
+	if get_node_or_null("/root/GameManager"):
+		get_node("/root/GameManager").inventory_manager = self
 
 # Public methods
 func add_item(item_id, quantity=1, quality=1.0):
@@ -32,7 +32,7 @@ func add_item(item_id, quantity=1, quality=1.0):
 	if not _inventory.has(item_id):
 		# Check if we can add this new item
 		if _inventory.size() >= _inventory_size:
-			emit_signal("inventory_full")
+			inventory_full.emit()
 			return 0
 		
 		# New item
@@ -41,8 +41,8 @@ func add_item(item_id, quantity=1, quality=1.0):
 			"quality": quality
 		}
 		
-		emit_signal("item_added", item_id, quantity)
-		emit_signal("inventory_updated", item_id, quantity)
+		item_added.emit(item_id, quantity)
+		inventory_updated.emit(item_id, quantity)
 		return quantity
 	else:
 		# Existing item, update quantity and average quality
@@ -57,8 +57,8 @@ func add_item(item_id, quantity=1, quality=1.0):
 			"quality": new_quality
 		}
 		
-		emit_signal("item_added", item_id, quantity)
-		emit_signal("inventory_updated", item_id, new_quantity)
+		item_added.emit(item_id, quantity)
+		inventory_updated.emit(item_id, new_quantity)
 		return quantity
 
 func remove_item(item_id, quantity=1):
@@ -86,8 +86,8 @@ func remove_item(item_id, quantity=1):
 	else:
 		_inventory[item_id] = current
 	
-	emit_signal("item_removed", item_id, amount_to_remove)
-	emit_signal("inventory_updated", item_id, current.quantity if current.quantity > 0 else 0)
+	item_removed.emit(item_id, amount_to_remove)
+	inventory_updated.emit(item_id, current.quantity if current.quantity > 0 else 0)
 	
 	return amount_to_remove
 
@@ -147,7 +147,7 @@ func get_remaining_slots():
 func clear_inventory():
 	"""Removes all items from inventory (use with caution!)"""
 	_inventory.clear()
-	emit_signal("inventory_updated", "", 0)
+	inventory_updated.emit("", 0)
 
 func get_save_data():
 	"""Returns a dictionary with all data needed to save inventory state"""
@@ -168,7 +168,7 @@ func load_save_data(data):
 	if data.has("inventory_upgrades"):
 		_inventory_upgrades = data.inventory_upgrades
 	
-	emit_signal("inventory_updated", "", 0)
+	inventory_updated.emit("", 0)
 
 # Private methods
 func _get_item_data(item_id):
