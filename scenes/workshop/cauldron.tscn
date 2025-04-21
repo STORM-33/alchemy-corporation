@@ -1,9 +1,42 @@
-[gd_scene load_steps=6 format=3 uid="uid://dphem05u2d156"]
+[gd_scene load_steps=12 format=3 uid="uid://dphem05u2d156"]
 
-[ext_resource type="Script" uid="uid://bf2qn2vyki1w" path="res://scenes/workshop/cauldron.gd" id="1_l16ud"]
+[ext_resource type="Script" path="res://scenes/workshop/enhanced_cauldron.gd" id="1_l16ud"]
 [ext_resource type="Texture2D" uid="uid://pav8y3r7jrq4" path="res://assets/images/workshop/cauldron_base.png" id="2_ujkl5"]
 [ext_resource type="Texture2D" uid="uid://cmncx6dmbp1ty" path="res://assets/images/workshop/cauldron_liquid.png" id="3_vwxyz"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="4_abcde"]
+
+[sub_resource type="Shader" id="Shader_riple"]
+code = "shader_type canvas_item;
+
+uniform float ripple_speed = 1.0;
+uniform float ripple_strength = 0.1;
+uniform float displacement_amount = 0.01;
+uniform float time_scale = 1.0;
+
+void fragment() {
+    // Time variable for animation
+    float time = TIME * time_scale;
+    
+    // Create ripple effect
+    vec2 uv = UV;
+    float ripple = sin(uv.x * 10.0 + time * ripple_speed) * cos(uv.y * 10.0 + time * ripple_speed) * ripple_strength;
+    
+    // Displace UVs
+    vec2 displaced_uv = uv + vec2(sin(time + uv.y * 5.0), cos(time + uv.x * 5.0)) * displacement_amount;
+    
+    // Apply ripple effect to color
+    COLOR = texture(TEXTURE, displaced_uv);
+    
+    // Add slight wobble to alpha for bubbling effect
+    COLOR.a = texture(TEXTURE, uv).a * (1.0 + ripple * 0.05);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uj9gl"]
+shader = SubResource("Shader_riple")
+shader_parameter/ripple_speed = 1.0
+shader_parameter/ripple_strength = 0.1
+shader_parameter/displacement_amount = 0.01
+shader_parameter/time_scale = 1.0
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jklm1"]
 particle_flag_disable_z = true
@@ -22,8 +55,71 @@ color = Color(0.5, 0.9, 0.7, 0.7)
 hue_variation_min = -0.1
 hue_variation_max = 0.1
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u8q23"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(30, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 20.0
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+gravity = Vector3(0, -20, 0)
+scale_min = 1.0
+scale_max = 3.0
+color = Color(0.9, 0.9, 0.9, 0.4)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_f8xvb"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+gravity = Vector3(0, 98, 0)
+scale_min = 2.0
+scale_max = 5.0
+color = Color(0.5, 0.8, 0.9, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h45gq"]
+bg_color = Color(0.145098, 0.168627, 0.203922, 0.882353)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.305882, 0.545098, 0.666667, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="Animation" id="Animation_s4q71"]
+resource_name = "liquid_glow"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:self_modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1.1, 1.1, 1.1, 1), Color(1, 1, 1, 1)]
+}
+
 [node name="Cauldron" type="Node2D"]
 script = ExtResource("1_l16ud")
+liquid_colors = {
+"healing": Color(0.3, 0.8, 0.4, 0.9),
+"mind": Color(0.4, 0.6, 0.9, 0.9),
+"neutral": Color(0.5, 0.5, 0.5, 0.8),
+"transformation": Color(0.8, 0.4, 0.8, 0.9),
+"utility": Color(0.8, 0.8, 0.3, 0.9)
+}
+error_liquid_color = Color(0.8, 0.2, 0.2, 0.9)
+max_bubbles = 20
+stir_power_multiplier = 1.2
 
 [node name="CauldronBase" type="Sprite2D" parent="."]
 position = Vector2(586, 376)
@@ -31,19 +127,43 @@ scale = Vector2(0.685556, 0.602222)
 texture = ExtResource("2_ujkl5")
 
 [node name="LiquidDisplay" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_uj9gl")
 position = Vector2(590, 236)
 texture = ExtResource("3_vwxyz")
 
-[node name="BrewingParticles" type="GPUParticles2D" parent="."]
+[node name="BubbleParticles" type="GPUParticles2D" parent="."]
 position = Vector2(590, 177)
 emitting = false
 amount = 24
+process_material = SubResource("ParticleProcessMaterial_jklm1")
 lifetime = 2.0
 preprocess = 0.5
-process_material = SubResource("ParticleProcessMaterial_jklm1")
+
+[node name="SteamParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 160)
+emitting = false
+amount = 16
+process_material = SubResource("ParticleProcessMaterial_u8q23")
+lifetime = 3.0
+
+[node name="SplashParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 200)
+emitting = false
+amount = 30
+process_material = SubResource("ParticleProcessMaterial_f8xvb")
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
 
 [node name="BrewingTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="StirTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = -10.0
 
 [node name="IngredientSlots" type="HBoxContainer" parent="."]
 anchors_preset = 7
@@ -84,20 +204,55 @@ layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
+[node name="PropertyDisplay" type="VBoxContainer" parent="."]
+offset_left = 380.0
+offset_top = 200.0
+offset_right = 480.0
+offset_bottom = 300.0
+theme = ExtResource("4_abcde")
+
+[node name="PropertyLabel" type="Label" parent="PropertyDisplay"]
+layout_mode = 2
+text = "Properties:"
+
+[node name="StirButton" type="Button" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 441.0
+offset_top = 445.0
+offset_right = 541.0
+offset_bottom = 476.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_abcde")
+text = "Stir"
+
 [node name="BrewButton" type="Button" parent="."]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = 541.0
-offset_top = 545.0
-offset_right = 641.0
-offset_bottom = 576.0
+offset_left = 641.0
+offset_top = 445.0
+offset_right = 741.0
+offset_bottom = 476.0
 grow_horizontal = 2
 grow_vertical = 0
 theme = ExtResource("4_abcde")
 text = "Brew"
+
+[node name="StirCounter" type="Label" parent="."]
+visible = false
+offset_left = 441.0
+offset_top = 480.0
+offset_right = 541.0
+offset_bottom = 506.0
+text = "Stirs: 0/5"
+horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 visible = false
@@ -106,13 +261,59 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -100.0
-offset_top = -60.0
-offset_right = 100.0
-offset_bottom = -50.0
+offset_left = 490.0
+offset_top = 300.0
+offset_right = 690.0
+offset_bottom = 310.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("4_abcde")
 max_value = 1.0
 value = 0.5
 show_percentage = false
+
+[node name="RecipePanel" type="Panel" parent="."]
+visible = false
+offset_left = 700.0
+offset_top = 200.0
+offset_right = 850.0
+offset_bottom = 320.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_h45gq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RecipePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+text = "Current Recipe"
+horizontal_alignment = 1
+
+[node name="RecipeName" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Unknown Recipe"
+horizontal_alignment = 1
+
+[node name="IngredientsLabel" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Ingredients:"
+
+[node name="IngredientsList" type="VBoxContainer" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LiquidAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("Animation_s4q71")
+}
+autoplay = "liquid_glow"

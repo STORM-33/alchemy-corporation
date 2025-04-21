@@ -1,0 +1,278 @@
+[gd_scene load_steps=6 format=3 uid="uid://c0svj6v3agq4u"]
+
+[ext_resource type="Script" path="res://scenes/ui/tutorial_overlay.gd" id="1_2l7n0"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_q0bce"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvn1f"]
+bg_color = Color(0.0980392, 0.164706, 0.231373, 0.941176)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.301961, 0.568627, 0.835294, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.290196)
+shadow_size = 6
+shadow_offset = Vector2(3, 3)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m8gxl"]
+bg_color = Color(0.2, 0.447059, 0.678431, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.301961, 0.611765, 0.898039, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_68yy7"]
+bg_color = Color(0.188235, 0.223529, 0.270588, 0.603922)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.2, 0.447059, 0.678431, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[node name="TutorialOverlay" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1_2l7n0")
+
+[node name="DimBackground" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.501961)
+
+[node name="TutorialPanel" type="Panel" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_q0bce")
+theme_override_styles/panel = SubResource("StyleBoxFlat_nvn1f")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TutorialPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="TutorialPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.611765, 0.898039, 1)
+theme_override_font_sizes/font_size = 24
+text = "Welcome, Alchemist!"
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="TutorialPanel/VBoxContainer"]
+layout_mode = 2
+max_value = 8.0
+value = 1.0
+show_percentage = false
+
+[node name="HSeparator" type="HSeparator" parent="TutorialPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="ContentContainer" type="VBoxContainer" parent="TutorialPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StepNumber" type="Label" parent="TutorialPanel/VBoxContainer/ContentContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.603922, 0.784314, 0.945098, 1)
+theme_override_font_sizes/font_size = 14
+text = "Step 1 of 8"
+
+[node name="MessageLabel" type="Label" parent="TutorialPanel/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Welcome to your new alchemy workshop! Let's learn the basics of brewing potions and running your business."
+autowrap_mode = 3
+
+[node name="Illustration" type="TextureRect" parent="TutorialPanel/VBoxContainer/ContentContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ButtonContainer" type="HBoxContainer" parent="TutorialPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="SkipButton" type="Button" parent="TutorialPanel/VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Skip Tutorial"
+
+[node name="NextButton" type="Button" parent="TutorialPanel/VBoxContainer/ButtonContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_m8gxl")
+text = "Next"
+
+[node name="HighlightRect" type="Panel" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -50.0
+offset_right = 50.0
+offset_bottom = 50.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_68yy7")
+
+[node name="PointerArrow" type="Polygon2D" parent="."]
+visible = false
+position = Vector2(400, 300)
+color = Color(0.301961, 0.611765, 0.898039, 1)
+polygon = PackedVector2Array(0, 0, -15, -30, 15, -30)
+
+[node name="PopupLabel" type="Label" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 23.0
+theme = ExtResource("2_q0bce")
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 2
+theme_override_font_sizes/font_size = 16
+text = "Click here!"
+
+[node name="ConfirmationDialog" type="ConfirmationDialog" parent="."]
+title = "Skip Tutorial?"
+initial_position = 2
+size = Vector2i(350, 100)
+ok_button_text = "Yes, Skip"
+dialog_text = "Are you sure you want to skip the tutorial? You can always access it again from the help button (?) in the top-right corner."
+cancel_button_text = "No, Continue"
+
+[node name="CompletionPanel" type="Panel" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -225.0
+offset_top = -175.0
+offset_right = 225.0
+offset_bottom = 175.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_q0bce")
+theme_override_styles/panel = SubResource("StyleBoxFlat_nvn1f")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CompletionPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="CompletionPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.301961, 0.611765, 0.898039, 1)
+theme_override_font_sizes/font_size = 28
+text = "Tutorial Complete!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="CompletionPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="MessageLabel" type="Label" parent="CompletionPanel/VBoxContainer"]
+layout_mode = 2
+text = "Congratulations! You've learned the basics of alchemy in your workshop. Here's a summary of what you've learned:"
+autowrap_mode = 3
+
+[node name="SummaryContainer" type="VBoxContainer" parent="CompletionPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Label" type="Label" parent="CompletionPanel/VBoxContainer/SummaryContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.835294, 0.960784, 1)
+text = "• Gathering ingredients from the garden and forest"
+
+[node name="Label2" type="Label" parent="CompletionPanel/VBoxContainer/SummaryContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.835294, 0.960784, 1)
+text = "• Adding ingredients to your cauldron"
+
+[node name="Label3" type="Label" parent="CompletionPanel/VBoxContainer/SummaryContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.835294, 0.960784, 1)
+text = "• Brewing potions with different recipes"
+
+[node name="Label4" type="Label" parent="CompletionPanel/VBoxContainer/SummaryContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.835294, 0.960784, 1)
+text = "• Fulfilling villager orders for rewards"
+
+[node name="RewardContainer" type="HBoxContainer" parent="CompletionPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CompletionPanel/VBoxContainer/RewardContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="CompletionPanel/VBoxContainer/RewardContainer/VBoxContainer"]
+layout_mode = 2
+text = "Tutorial Completion Reward:"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="CompletionPanel/VBoxContainer/RewardContainer/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoldIcon" type="TextureRect" parent="CompletionPanel/VBoxContainer/RewardContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldAmount" type="Label" parent="CompletionPanel/VBoxContainer/RewardContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.741176, 0.27451, 1)
+theme_override_font_sizes/font_size = 20
+text = "50"
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="CompletionPanel/VBoxContainer"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_m8gxl")
+text = "Start Brewing!"

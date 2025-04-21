@@ -1,0 +1,512 @@
+[gd_scene load_steps=10 format=3 uid="uid://dcghhly5h3xqo"]
+
+[ext_resource type="Script" uid="uid://dk1jetogl5hh7" path="res://scenes/ui/enhanced_hud.gd" id="1_0mwgc"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_abcde"]
+[ext_resource type="PackedScene" path="res://scenes/ui/weather_display.tscn" id="3_h4i2l"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujnl2"]
+bg_color = Color(0.105882, 0.121569, 0.147059, 0.901961)
+border_width_bottom = 2
+border_color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k8ful"]
+bg_color = Color(0.105882, 0.121569, 0.147059, 0.901961)
+border_width_top = 2
+border_color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3opr6"]
+bg_color = Color(0.105882, 0.121569, 0.147059, 0.784314)
+border_width_left = 2
+border_width_right = 2
+border_color = Color(0.211765, 0.239216, 0.290196, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qn5wx"]
+bg_color = Color(0.141176, 0.168627, 0.2, 0.882353)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.258824, 0.407843, 0.560784, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.176471)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h1gy7"]
+bg_color = Color(0.203922, 0.286275, 0.368627, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.356863, 0.501961, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cfnsx"]
+bg_color = Color(0.141176, 0.168627, 0.2, 0.882353)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.258824, 0.407843, 0.560784, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="HUD" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_abcde")
+script = ExtResource("1_0mwgc")
+
+[node name="TopBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ujnl2")
+
+[node name="Resources" type="HBoxContainer" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_right = 300.0
+grow_vertical = 2
+alignment = 1
+
+[node name="GoldPanel" type="PanelContainer" parent="TopBar/Resources"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/Resources/GoldPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoldIcon" type="TextureRect" parent="TopBar/Resources/GoldPanel/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldLabel" type="Label" parent="TopBar/Resources/GoldPanel/HBoxContainer"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EssencePanel" type="PanelContainer" parent="TopBar/Resources"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/Resources/EssencePanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="EssenceIcon" type="TextureRect" parent="TopBar/Resources/EssencePanel/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EssenceLabel" type="Label" parent="TopBar/Resources/EssencePanel/HBoxContainer"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TimeDisplay" type="Label" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -20.0
+offset_right = 100.0
+offset_bottom = 20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "Day 1 - 08:30 AM"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerInfo" type="HBoxContainer" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+alignment = 1
+
+[node name="PlayerIcon" type="TextureRect" parent="TopBar/PlayerInfo"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TopBar/PlayerInfo"]
+layout_mode = 2
+
+[node name="LevelLabel" type="Label" parent="TopBar/PlayerInfo/VBoxContainer"]
+layout_mode = 2
+text = "Level 1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ExperienceBar" type="ProgressBar" parent="TopBar/PlayerInfo/VBoxContainer"]
+custom_minimum_size = Vector2(100, 10)
+layout_mode = 2
+max_value = 1.0
+value = 0.5
+show_percentage = false
+
+[node name="HelpButton" type="Button" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 40.0
+grow_horizontal = 0
+tooltip_text = "Show Tutorial"
+text = "?"
+
+[node name="BottomBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_k8ful")
+
+[node name="InventoryButton" type="Button" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -20.0
+offset_right = 116.0
+offset_bottom = 20.0
+grow_vertical = 2
+text = "Inventory"
+
+[node name="RecipeButton" type="Button" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 132.0
+offset_top = -20.0
+offset_right = 232.0
+offset_bottom = 20.0
+grow_vertical = 2
+text = "Recipes"
+
+[node name="ShopButton" type="Button" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -116.0
+offset_top = -20.0
+offset_right = -16.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+text = "Shop"
+
+[node name="NavButtons" type="HBoxContainer" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -25.0
+offset_right = 200.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="WorkshopButton" type="Button" parent="BottomBar/NavButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Workshop"
+
+[node name="GardenButton" type="Button" parent="BottomBar/NavButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Garden"
+
+[node name="ForestButton" type="Button" parent="BottomBar/NavButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Forest"
+
+[node name="SideBar" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -250.0
+offset_top = 80.0
+offset_bottom = -80.0
+grow_horizontal = 0
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3opr6")
+
+[node name="QuestPanel" type="VBoxContainer" parent="SideBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Header" type="Label" parent="SideBar/QuestPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Current Quests"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="SideBar/QuestPanel"]
+layout_mode = 2
+
+[node name="DailyGoals" type="VBoxContainer" parent="SideBar/QuestPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SideBar/QuestPanel/DailyGoals"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Daily Goals"
+
+[node name="GoalsContainer" type="VBoxContainer" parent="SideBar/QuestPanel/DailyGoals"]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="SideBar/QuestPanel"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="VillagerOrders" type="VBoxContainer" parent="SideBar/QuestPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="SideBar/QuestPanel/VillagerOrders"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Villager Orders"
+
+[node name="OrdersContainer" type="VBoxContainer" parent="SideBar/QuestPanel/VillagerOrders"]
+layout_mode = 2
+
+[node name="QuestPanelToggle" type="Button" parent="SideBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = -20.0
+offset_top = -15.0
+offset_bottom = 15.0
+grow_vertical = 2
+text = ">"
+
+[node name="WeatherDisplay" parent="." instance=ExtResource("3_h4i2l")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1138.0
+offset_top = 97.0
+offset_right = -958.0
+offset_bottom = 187.0
+grow_horizontal = 0
+script = null
+
+[node name="NotificationArea" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 300.0
+grow_horizontal = 2
+alignment = 2
+
+[node name="DailyBonusPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -150.0
+offset_right = 200.0
+offset_bottom = 150.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_qn5wx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="DailyBonusPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="DailyBonusPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Daily Bonus!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="DailyBonusPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="Description" type="Label" parent="DailyBonusPanel/VBoxContainer"]
+layout_mode = 2
+text = "Today's special bonuses:"
+horizontal_alignment = 1
+
+[node name="BonusList" type="VBoxContainer" parent="DailyBonusPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Panel" type="Panel" parent="DailyBonusPanel/VBoxContainer/BonusList"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_h1gy7")
+
+[node name="Label" type="Label" parent="DailyBonusPanel/VBoxContainer/BonusList/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "+20% Brewing Speed"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="DailyBonusPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Great!"
+
+[node name="GoalPopup" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -150.0
+offset_top = -100.0
+offset_right = 150.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cfnsx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GoalPopup"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Goal Completed!"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+
+[node name="GoalName" type="Label" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Gather Ingredients"
+horizontal_alignment = 1
+
+[node name="RewardLabel" type="Label" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Rewards:"
+horizontal_alignment = 1
+
+[node name="RewardContainer" type="HBoxContainer" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoldIcon" type="TextureRect" parent="GoalPopup/VBoxContainer/RewardContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldAmount" type="Label" parent="GoalPopup/VBoxContainer/RewardContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.741176, 0.27451, 1)
+theme_override_font_sizes/font_size = 16
+text = "10"
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="GoalPopup/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 10
+text = "Collect"

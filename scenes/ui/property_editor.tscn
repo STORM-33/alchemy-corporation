@@ -1,0 +1,280 @@
+[gd_scene load_steps=7 format=3 uid="uid://c2i8ympdke0gx"]
+
+[ext_resource type="Script" path="res://scenes/ui/property_editor.gd" id="1_2xbpm"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_uibgh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r4e3d"]
+bg_color = Color(0.0980392, 0.117647, 0.141176, 0.941176)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.305882, 0.639216, 0.756863, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+shadow_color = Color(0, 0, 0, 0.203922)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f5xtk"]
+bg_color = Color(0.141176, 0.168627, 0.2, 0.682353)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.223529, 0.258824, 0.305882, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="Shader" id="Shader_xrau6"]
+code = "shader_type canvas_item;
+
+uniform float time_scale = 1.0;
+uniform float wave_amplitude = 0.02;
+uniform float wave_frequency = 10.0;
+uniform vec4 tint_color : source_color = vec4(0.5, 0.5, 0.5, 0.5);
+
+void fragment() {
+    // Calculate wave effect
+    float wave = sin(TIME * time_scale + UV.x * wave_frequency) * wave_amplitude;
+    
+    // Adjust UVs with wave
+    vec2 adjusted_uv = vec2(UV.x, UV.y + wave);
+    
+    // Sample the texture with adjusted UVs
+    vec4 color = texture(TEXTURE, adjusted_uv);
+    
+    // Add a subtle tint
+    color = mix(color, tint_color, 0.2);
+    
+    // Add glow at edges
+    float edge = smoothstep(0.4, 0.5, abs(UV.x - 0.5)) + smoothstep(0.4, 0.5, abs(UV.y - 0.5));
+    color.rgb += vec3(0.1, 0.1, 0.1) * edge;
+    
+    COLOR = color;
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_55sgm"]
+shader = SubResource("Shader_xrau6")
+shader_parameter/time_scale = 2.0
+shader_parameter/wave_amplitude = 0.02
+shader_parameter/wave_frequency = 10.0
+shader_parameter/tint_color = Color(0.5, 0.8, 1, 0.5)
+
+[node name="PropertyEditor" type="Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -300.0
+offset_right = 250.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_uibgh")
+theme_override_styles/panel = SubResource("StyleBoxFlat_r4e3d")
+script = ExtResource("1_2xbpm")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Alchemical Properties"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="VBoxContainer"]
+layout_mode = 2
+
+[node name="InfoPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f5xtk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/InfoPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/InfoPanel/VBoxContainer"]
+layout_mode = 2
+text = "Combination Info"
+horizontal_alignment = 1
+
+[node name="InfoLabel" type="Label" parent="VBoxContainer/InfoPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.654902, 0.792157, 0.909804, 1)
+theme_override_font_sizes/font_size = 12
+text = "Properties determine potion effects. Try different ingredient combinations to discover new potions."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="PropertiesList" type="VBoxContainer" parent="VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="PropertyItem" type="PanelContainer" parent="VBoxContainer/ScrollContainer/PropertiesList"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f5xtk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer"]
+layout_mode = 2
+
+[node name="PropertyIcon" type="TextureRect" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PropertyName" type="Label" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Healing"
+
+[node name="PropertyValue" type="Label" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.403922, 0.792157, 0.505882, 1)
+theme_override_font_sizes/font_size = 16
+text = "1.5"
+
+[node name="ProgressBar" type="ProgressBar" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer"]
+layout_mode = 2
+max_value = 2.0
+value = 1.5
+show_percentage = false
+
+[node name="DescriptionLabel" type="Label" parent="VBoxContainer/ScrollContainer/PropertiesList/PropertyItem/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.682353, 0.682353, 1)
+theme_override_font_sizes/font_size = 12
+text = "Restores health over time."
+autowrap_mode = 3
+
+[node name="Spacer" type="Control" parent="VBoxContainer"]
+custom_minimum_size = Vector2(0, 10)
+layout_mode = 2
+
+[node name="ResultPanel" type="PanelContainer" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_f5xtk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ResultPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="VBoxContainer/ResultPanel/VBoxContainer"]
+layout_mode = 2
+text = "Predicted Result"
+horizontal_alignment = 1
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer/ResultPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ResultIcon" type="TextureRect" parent="VBoxContainer/ResultPanel/VBoxContainer/HBoxContainer"]
+material = SubResource("ShaderMaterial_55sgm")
+custom_minimum_size = Vector2(48, 48)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/ResultPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ResultName" type="Label" parent="VBoxContainer/ResultPanel/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = "Minor Healing Potion"
+
+[node name="ResultCategory" type="Label" parent="VBoxContainer/ResultPanel/VBoxContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.682353, 0.682353, 1)
+theme_override_font_sizes/font_size = 12
+text = "Category: Healing"
+
+[node name="ResultDescription" type="Label" parent="VBoxContainer/ResultPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "A simple potion that heals minor wounds."
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ButtonContainer" type="HBoxContainer" parent="VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="ExperimentButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Start Experimental Brewing"
+
+[node name="CancelButton" type="Button" parent="VBoxContainer/ButtonContainer"]
+layout_mode = 2
+text = "Cancel"
+
+[node name="PropertyItemTemplate" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_left = 300.0
+offset_right = 500.0
+offset_bottom = 100.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_f5xtk")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PropertyItemTemplate"]
+layout_mode = 2
+
+[node name="HeaderContainer" type="HBoxContainer" parent="PropertyItemTemplate/VBoxContainer"]
+layout_mode = 2
+
+[node name="PropertyIcon" type="TextureRect" parent="PropertyItemTemplate/VBoxContainer/HeaderContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PropertyName" type="Label" parent="PropertyItemTemplate/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+text = "Property Name"
+
+[node name="PropertyValue" type="Label" parent="PropertyItemTemplate/VBoxContainer/HeaderContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.682353, 0.682353, 1)
+theme_override_font_sizes/font_size = 16
+text = "0.0"
+
+[node name="ProgressBar" type="ProgressBar" parent="PropertyItemTemplate/VBoxContainer"]
+layout_mode = 2
+max_value = 2.0
+value = 1.0
+show_percentage = false
+
+[node name="DescriptionLabel" type="Label" parent="PropertyItemTemplate/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.682353, 0.682353, 1)
+theme_override_font_sizes/font_size = 12
+text = "Property description."
+autowrap_mode = 3

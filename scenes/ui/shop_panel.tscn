@@ -1,0 +1,465 @@
+[gd_scene load_steps=9 format=3 uid="uid://b6quwx0a1r43h"]
+
+[ext_resource type="Script" path="res://scenes/ui/shop_panel.gd" id="1_6q8lr"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_hbckp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j7c42"]
+bg_color = Color(0.145098, 0.168627, 0.203922, 0.94902)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.470588, 0.345098, 0.192157, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+shadow_color = Color(0, 0, 0, 0.27451)
+shadow_size = 4
+shadow_offset = Vector2(2, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4l0vg"]
+bg_color = Color(0.145098, 0.168627, 0.203922, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.356863, 0.270588, 0.152941, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rhbwt"]
+bg_color = Color(0.2, 0.227451, 0.270588, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.356863, 0.270588, 0.152941, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jywoe"]
+bg_color = Color(0.203922, 0.286275, 0.368627, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.309804, 0.537255, 0.729412, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ltwmr"]
+bg_color = Color(0.129412, 0.301961, 0.184314, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.223529, 0.513726, 0.294118, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n4ghk"]
+bg_color = Color(0.317647, 0.266667, 0.156863, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.470588, 0.345098, 0.192157, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="ShopPanel" type="Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -400.0
+offset_top = -300.0
+offset_right = 400.0
+offset_bottom = 300.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_hbckp")
+theme_override_styles/panel = SubResource("StyleBoxFlat_j7c42")
+script = ExtResource("1_6q8lr")
+
+[node name="HeaderLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 15.0
+offset_right = 150.0
+offset_bottom = 55.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 24
+text = "Village Shop"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ShopkeeperLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 50.0
+offset_right = 200.0
+offset_bottom = 80.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.878431, 0.705882, 0.533333, 1)
+theme_override_font_sizes/font_size = 16
+text = "Merchant Orrin's Trading Post"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -50.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = 50.0
+grow_horizontal = 0
+text = "X"
+
+[node name="GoldPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -180.0
+offset_top = 15.0
+offset_right = -60.0
+offset_bottom = 50.0
+grow_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_4l0vg")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="GoldPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = -5.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="GoldIcon" type="TextureRect" parent="GoldPanel/HBoxContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="GoldAmount" type="Label" parent="GoldPanel/HBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.741176, 0.27451, 1)
+theme_override_font_sizes/font_size = 16
+text = "0"
+vertical_alignment = 1
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 80.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Ingredients" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+
+[node name="FilterPanel" type="PanelContainer" parent="TabContainer/Ingredients"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rhbwt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Ingredients/FilterPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer"]
+layout_mode = 2
+text = "Filter Ingredients:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AllButton" type="Button" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_jywoe")
+text = "All"
+
+[node name="PlantsButton" type="Button" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ltwmr")
+text = "Plants"
+
+[node name="MineralsButton" type="Button" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_n4ghk")
+text = "Minerals"
+
+[node name="SpecialButton" type="Button" parent="TabContainer/Ingredients/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Special"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Ingredients"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="ItemGrid" type="GridContainer" parent="TabContainer/Ingredients/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+columns = 4
+
+[node name="Recipes" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="FilterPanel" type="PanelContainer" parent="TabContainer/Recipes"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rhbwt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Recipes/FilterPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/Recipes/FilterPanel/VBoxContainer"]
+layout_mode = 2
+text = "Available Recipes:"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TabContainer/Recipes/FilterPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AllButton" type="Button" parent="TabContainer/Recipes/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_jywoe")
+text = "All"
+
+[node name="HealingButton" type="Button" parent="TabContainer/Recipes/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ltwmr")
+text = "Healing"
+
+[node name="UtilityButton" type="Button" parent="TabContainer/Recipes/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_n4ghk")
+text = "Utility"
+
+[node name="MindButton" type="Button" parent="TabContainer/Recipes/FilterPanel/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Mind"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Recipes"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="RecipeList" type="VBoxContainer" parent="TabContainer/Recipes/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Upgrades" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+
+[node name="Label" type="Label" parent="TabContainer/Upgrades"]
+layout_mode = 2
+text = "Workshop Upgrades"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="TabContainer/Upgrades"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="UpgradeList" type="VBoxContainer" parent="TabContainer/Upgrades/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ItemInfoPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemInfoPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = -15.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ItemName" type="Label" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Item Name"
+horizontal_alignment = 1
+
+[node name="ItemIcon" type="TextureRect" parent="ItemInfoPanel/VBoxContainer"]
+custom_minimum_size = Vector2(80, 80)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemDescription" type="Label" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+text = "Item description goes here."
+autowrap_mode = 3
+
+[node name="PropertiesPanel" type="PanelContainer" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_rhbwt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ItemInfoPanel/VBoxContainer/PropertiesPanel"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ItemInfoPanel/VBoxContainer/PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+text = "Properties:"
+
+[node name="PropertiesList" type="VBoxContainer" parent="ItemInfoPanel/VBoxContainer/PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="PriceLabel" type="Label" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.741176, 0.27451, 1)
+theme_override_font_sizes/font_size = 18
+text = "Price: 10 gold"
+horizontal_alignment = 1
+
+[node name="QuantityContainer" type="HBoxContainer" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="MinusButton" type="Button" parent="ItemInfoPanel/VBoxContainer/QuantityContainer"]
+layout_mode = 2
+text = "-"
+
+[node name="QuantityLabel" type="Label" parent="ItemInfoPanel/VBoxContainer/QuantityContainer"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+text = "1"
+horizontal_alignment = 1
+
+[node name="PlusButton" type="Button" parent="ItemInfoPanel/VBoxContainer/QuantityContainer"]
+layout_mode = 2
+text = "+"
+
+[node name="BuyButton" type="Button" parent="ItemInfoPanel/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Buy Item"
+
+[node name="CloseInfoButton" type="Button" parent="ItemInfoPanel"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -30.0
+offset_top = 5.0
+offset_right = -5.0
+offset_bottom = 30.0
+grow_horizontal = 0
+text = "X"
+
+[node name="RestockTimer" type="Timer" parent="."]
+wait_time = 30.0
+one_shot = true
+
+[node name="ShopItemTemplate" type="PanelContainer" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 140.0
+offset_bottom = 180.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rhbwt")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ShopItemTemplate"]
+layout_mode = 2
+alignment = 1
+
+[node name="ItemIcon" type="TextureRect" parent="ShopItemTemplate/VBoxContainer"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+size_flags_horizontal = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ItemName" type="Label" parent="ShopItemTemplate/VBoxContainer"]
+layout_mode = 2
+text = "Item Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ItemCategory" type="Label" parent="ShopItemTemplate/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.682353, 0.682353, 0.682353, 1)
+theme_override_font_sizes/font_size = 12
+text = "Category"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PriceContainer" type="HBoxContainer" parent="ShopItemTemplate/VBoxContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="GoldIcon" type="TextureRect" parent="ShopItemTemplate/VBoxContainer/PriceContainer"]
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PriceLabel" type="Label" parent="ShopItemTemplate/VBoxContainer/PriceContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92549, 0.741176, 0.27451, 1)
+text = "10"
+
+[node name="QuantityLabel" type="Label" parent="ShopItemTemplate/VBoxContainer"]
+layout_mode = 2
+text = "Quantity: 5"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BuyButton" type="Button" parent="ShopItemTemplate/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Buy"
