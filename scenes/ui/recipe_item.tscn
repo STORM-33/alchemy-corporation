@@ -1,0 +1,50 @@
+[gd_scene load_steps=3 format=3 uid="uid://c5r3vx2q6yg7n"]
+
+[ext_resource type="Script" path="res://scenes/ui/recipe_item.gd" id="1_bkj0p"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_d0vgs"]
+
+[node name="RecipeItem" type="Button"]
+custom_minimum_size = Vector2(0, 40)
+offset_right = 300.0
+offset_bottom = 40.0
+size_flags_horizontal = 3
+theme = ExtResource("2_d0vgs")
+alignment = 0
+text_overrun_behavior = 3
+script = ExtResource("1_bkj0p")
+
+[node name="CategoryIndicator" type="ColorRect" parent="."]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 4.0
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.501961)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 12.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="RecipeName" type="Label" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Recipe Name"
+vertical_alignment = 1
+text_overrun_behavior = 3
+
+[node name="RecipeStatus" type="TextureRect" parent="HBoxContainer"]
+custom_minimum_size = Vector2(24, 24)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
