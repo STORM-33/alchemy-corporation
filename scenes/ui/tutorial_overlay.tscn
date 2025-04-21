@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://c0svj6v3agq4u"]
+[gd_scene load_steps=5 format=3 uid="uid://nceqtcpxjx85"]
 
-[ext_resource type="Script" path="res://scenes/ui/tutorial_overlay.gd" id="1_2l7n0"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_q0bce"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nvn1f"]
@@ -44,7 +43,6 @@ corner_radius_bottom_left = 8
 
 [node name="TutorialOverlay" type="CanvasLayer"]
 layer = 100
-script = ExtResource("1_2l7n0")
 
 [node name="DimBackground" type="ColorRect" parent="."]
 anchors_preset = 15

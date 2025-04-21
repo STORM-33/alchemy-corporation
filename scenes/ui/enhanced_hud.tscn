@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dk1jetogl5hh7" path="res://scenes/ui/enhanced_hud.gd" id="1_0mwgc"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_abcde"]
-[ext_resource type="PackedScene" path="res://scenes/ui/weather_display.tscn" id="3_h4i2l"]
+[ext_resource type="PackedScene" uid="uid://drkep0mhoc1tj" path="res://scenes/ui/weather_display.tscn" id="3_h4i2l"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujnl2"]
 bg_color = Color(0.105882, 0.121569, 0.147059, 0.901961)

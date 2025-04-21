@@ -1,459 +1,313 @@
 extends Node
-## Tutorial system that guides new players through game mechanics
+## Manages the tutorial experience for new players
+## Add this script to an autoload in the Project Settings
 
 # Signals
-signal tutorial_step_started(step_id)
-signal tutorial_step_completed(step_id)
+signal tutorial_started
+signal tutorial_step_changed(step_number)
 signal tutorial_completed
+signal tutorial_skipped
 
 # Constants
-const TUTORIAL_STEPS = {
-	"welcome": {
-		"title": "Welcome Alchemist!",
-		"message": "Welcome to your new alchemy workshop! Let's learn the basics.",
-		"target": "",
-		"required_action": "acknowledge"
-	},
-	"open_garden": {
-		"title": "Visit the Garden",
-		"message": "First, you'll need ingredients. Click the Garden button to gather some.",
-		"target": "garden_button",
-		"required_action": "click"
-	},
-	"gather_ingredient": {
-		"title": "Gather Ingredients",
-		"message": "Click on plants to gather ingredients for your potions.",
-		"target": "garden_resource",
-		"required_action": "gather",
-		"count": 2
-	},
-	"return_workshop": {
-		"title": "Return to Workshop",
-		"message": "Great! Now return to your workshop to brew a potion.",
-		"target": "workshop_button",
-		"required_action": "click"
-	},
-	"open_inventory": {
-		"title": "Open Inventory",
-		"message": "Click the inventory button to see what you've gathered.",
-		"target": "inventory_button",
-		"required_action": "click"
-	},
-	"add_ingredient": {
-		"title": "Add to Cauldron",
-		"message": "Drag ingredients to the cauldron or click 'Use in Brewing'.",
-		"target": "cauldron_slot",
-		"required_action": "add_ingredient",
-		"count": 2
-	},
-	"brew_potion": {
-		"title": "Brew Your First Potion",
-		"message": "Click the Brew button to create your first potion!",
-		"target": "brew_button",
-		"required_action": "click"
-	},
-	"complete": {
-		"title": "Tutorial Complete!",
-		"message": "You've learned the basics! Keep experimenting with different ingredient combinations to discover new recipes.",
-		"target": "",
-		"required_action": "acknowledge"
-	}
-}
+const TUTORIAL_OVERLAY_SCENE = preload("res://scenes/ui/tutorial_overlay.tscn")
+
+# TutorialStep class to define tutorial steps
+class TutorialStep:
+	var title: String
+	var message: String
+	var highlight_node_path: String = ""
+	var highlight_size: Vector2 = Vector2(100, 100)
+	var pointer_position: Vector2 = Vector2.ZERO
+	var popup_text: String = ""
+	var wait_for_action: bool = false
+	var action_type: String = ""
+	var action_target: String = ""
+	
+	func _init(p_title: String, p_message: String):
+		title = p_title
+		message = p_message
+	
+	func with_highlight(node_path: String, size: Vector2 = Vector2(100, 100)):
+		highlight_node_path = node_path
+		highlight_size = size
+		return self
+	
+	func with_pointer(position: Vector2, text: String = ""):
+		pointer_position = position
+		popup_text = text
+		return self
+	
+	func with_action(action: String, target: String = ""):
+		wait_for_action = true
+		action_type = action
+		action_target = target
+		return self
 
 # Private variables
-var _current_step = ""
-var _tutorial_active = false
-var _progress = {}
-var _highlight_node = null
+var _tutorial_steps = []
+var _current_step = 0
 var _tutorial_overlay = null
+var _tutorial_completed = false
+var _is_tutorial_active = false
+var _waiting_for_action = false
+var _target_node = null
 
 # Lifecycle methods
 func _ready():
-	# Connect to game systems
-	var game_manager = get_node_or_null("/root/GameManager")
-	if game_manager:
-		# Listen for new game
-		game_manager.game_initialized.connect(_on_new_game)
-		
-	# Create progress dictionary with all steps set to incomplete
-	for step_id in TUTORIAL_STEPS:
-		_progress[step_id] = false
-		
-	# Load saved progress if exists
-	_load_tutorial_progress()
-	
-	# Create tutorial highlight node
-	_create_highlight_node()
+	# Create tutorial steps
+	_initialize_tutorial_steps()
 
 # Public methods
 func start_tutorial():
-	"""Starts or resumes the tutorial sequence"""
-	if _is_tutorial_completed():
-		return false
-		
-	_tutorial_active = true
+	"""Starts the tutorial from the beginning"""
+	if _is_tutorial_active:
+		return
 	
-	# Find first incomplete step
-	for step_id in TUTORIAL_STEPS:
-		if not _progress[step_id]:
-			_start_step(step_id)
-			break
-			
-	return true
+	_is_tutorial_active = true
+	_current_step = 0
+	_tutorial_completed = false
 	
+	# Create tutorial overlay
+	_create_tutorial_overlay()
+	
+	# Show first step
+	_show_current_step()
+	
+	tutorial_started.emit()
+
+func next_step():
+	"""Advances to the next tutorial step"""
+	if not _is_tutorial_active:
+		return
+	
+	_current_step += 1
+	
+	if _current_step >= _tutorial_steps.size():
+		_complete_tutorial()
+		return
+	
+	_show_current_step()
+	tutorial_step_changed.emit(_current_step)
+
 func skip_tutorial():
-	"""Marks the tutorial as completed and hides all tutorial elements"""
-	_tutorial_active = false
+	"""Skips the tutorial"""
+	if not _is_tutorial_active:
+		return
 	
-	# Mark all steps as complete
-	for step_id in TUTORIAL_STEPS:
-		_progress[step_id] = true
+	_is_tutorial_active = false
+	_waiting_for_action = false
 	
-	# Hide any active tutorial UI
-	_hide_tutorial_ui()
+	if _tutorial_overlay:
+		_tutorial_overlay.queue_free()
+		_tutorial_overlay = null
 	
-	# Save progress
-	_save_tutorial_progress()
-	
-	tutorial_completed.emit()
-	return true
-	
-func is_step_completed(step_id):
-	"""Checks if a specific tutorial step is completed"""
-	if _progress.has(step_id):
-		return _progress[step_id]
-	return false
-	
+	tutorial_skipped.emit()
+
 func is_tutorial_active():
 	"""Returns whether the tutorial is currently active"""
-	return _tutorial_active
+	return _is_tutorial_active
+
+func is_tutorial_completed():
+	"""Returns whether the tutorial has been completed"""
+	return _tutorial_completed
+
+func trigger_action(action_type, target_name = ""):
+	"""Called when a player performs a tutorial-relevant action"""
+	if not _is_tutorial_active or not _waiting_for_action:
+		return
+	
+	var current_step = _tutorial_steps[_current_step]
+	
+	if action_type == current_step.action_type:
+		if current_step.action_target.is_empty() or current_step.action_target == target_name:
+			_waiting_for_action = false
+			next_step()
 
 # Private methods
-func _start_step(step_id):
-	"""Starts a specific tutorial step"""
-	if not TUTORIAL_STEPS.has(step_id):
-		return
+func _initialize_tutorial_steps():
+	"""Creates all tutorial steps"""
+	_tutorial_steps = [
+		TutorialStep.new(
+			"Welcome, Alchemist!",
+			"Welcome to your new alchemy workshop! Let's learn the basics of brewing potions and running your business."
+		),
 		
-	_current_step = step_id
-	var step = TUTORIAL_STEPS[step_id]
-	
-	# Connect to needed signals based on required action
-	_connect_step_signals(step_id)
-	
-	# Show tutorial UI for this step
-	_show_tutorial_ui(step)
-	
-	# Highlight target element if specified
-	if step.target != "":
-		_highlight_target(step.target)
-	
-	tutorial_step_started.emit(step_id)
+		TutorialStep.new(
+			"Your Workshop",
+			"This is your workshop. The cauldron is where you'll brew your potions. Let's start by gathering some ingredients."
+		).with_highlight("/root/Main/Workshop/Stations/Cauldron", Vector2(200, 200)),
+		
+		TutorialStep.new(
+			"Gathering Ingredients",
+			"First, let's visit the garden to gather some ingredients. Click the 'Garden' button to visit your garden."
+		).with_highlight("/root/Main/UILayer/HUD/BottomBar/NavButtons/GardenButton", Vector2(100, 50))
+		.with_pointer(Vector2(0, -30), "Click here")
+		.with_action("navigation", "garden"),
+		
+		TutorialStep.new(
+			"Collecting Herbs",
+			"Great! Now click on any plant to collect it. You need ingredients to make potions."
+		).with_action("gather", ""),
+		
+		TutorialStep.new(
+			"Return to Workshop",
+			"Good job! Now let's return to your workshop to start brewing. Click the 'Workshop' button."
+		).with_highlight("/root/Main/UILayer/HUD/BottomBar/NavButtons/WorkshopButton", Vector2(100, 50))
+		.with_pointer(Vector2(0, -30), "Click here")
+		.with_action("navigation", "workshop"),
+		
+		TutorialStep.new(
+			"Adding Ingredients",
+			"Click on the cauldron to select it, then open your inventory by clicking the 'Inventory' button."
+		).with_highlight("/root/Main/UILayer/HUD/BottomBar/InventoryButton", Vector2(100, 50))
+		.with_pointer(Vector2(0, -30), "Click here")
+		.with_action("open_inventory", ""),
+		
+		TutorialStep.new(
+			"Brewing Process",
+			"Drag ingredients from your inventory to the cauldron. Once you've added ingredients, click the 'Brew' button to start brewing."
+		).with_highlight("/root/Main/Workshop/Stations/Cauldron/BrewButton", Vector2(100, 50))
+		.with_action("brewing_started", ""),
+		
+		TutorialStep.new(
+			"Your First Potion",
+			"Excellent! While brewing, try stirring the cauldron for better quality. Wait for the brewing to complete."
+		).with_action("brewing_completed", ""),
+		
+		TutorialStep.new(
+			"Congratulations!",
+			"You've created your first potion! As you progress, you'll discover more recipes and unlock advanced brewing techniques. Explore more ingredients in the Garden and Forest, fulfill orders for villagers, and grow your alchemy business!"
+		)
+	]
 
-func _complete_step(step_id):
-	"""Marks a step as complete and advances to the next step"""
-	if not TUTORIAL_STEPS.has(step_id):
-		return
-		
-	# Disconnect signals for this step
-	_disconnect_step_signals(step_id)
-	
-	# Mark as complete
-	_progress[step_id] = true
-	
-	# Hide highlight
-	_hide_highlight()
-	
-	tutorial_step_completed.emit(step_id)
-	
-	# Save progress
-	_save_tutorial_progress()
-	
-	# Check if tutorial is now complete
-	if _is_tutorial_completed():
-		_tutorial_active = false
-		tutorial_completed.emit()
-		return
-		
-	# Find next step
-	var found_current = false
-	for next_step_id in TUTORIAL_STEPS:
-		if found_current and not _progress[next_step_id]:
-			# Start next incomplete step
-			_start_step(next_step_id)
-			return
-			
-		if next_step_id == step_id:
-			found_current = true
-
-func _connect_step_signals(step_id):
-	"""Connects to the appropriate signals based on the step's required action"""
-	var step = TUTORIAL_STEPS[step_id]
-	
-	match step.required_action:
-		"gather":
-			var gathering_system = get_node_or_null("/root/GatheringSystem")
-			if gathering_system:
-				gathering_system.resource_gathered.connect(_on_resource_gathered)
-			
-		"add_ingredient":
-			var workshop = get_node_or_null("/root/Main/Workshop")
-			if workshop and workshop.has_node("Stations/Cauldron"):
-				workshop.get_node("Stations/Cauldron").ingredient_added.connect(_on_ingredient_added)
-			
-		"click":
-			# We'll handle this when highlighting the target
-			pass
-			
-		"acknowledge":
-			# This is handled by the tutorial UI itself
-			pass
-
-func _disconnect_step_signals(step_id):
-	"""Disconnects signals that were connected for this step"""
-	var step = TUTORIAL_STEPS[step_id]
-	
-	match step.required_action:
-		"gather":
-			var gathering_system = get_node_or_null("/root/GatheringSystem")
-			if gathering_system and gathering_system.is_connected("resource_gathered", _on_resource_gathered):
-				gathering_system.resource_gathered.disconnect(_on_resource_gathered)
-			
-		"add_ingredient":
-			var workshop = get_node_or_null("/root/Main/Workshop")
-			if workshop and workshop.has_node("Stations/Cauldron"):
-				var cauldron = workshop.get_node("Stations/Cauldron")
-				if cauldron.is_connected("ingredient_added", _on_ingredient_added):
-					cauldron.ingredient_added.disconnect(_on_ingredient_added)
-
-func _highlight_target(target_id):
-	"""Highlights the target UI element or game object"""
-	_hide_highlight()
-	
-	var target_node = _find_target_node(target_id)
-	if not target_node:
-		return
-	
-	# Position highlight around target
-	if _highlight_node:
-		_highlight_node.global_position = target_node.global_position
-		if target_node is Control:
-			_highlight_node.size = target_node.size
-		elif target_node is Node2D and target_node.has_node("CollisionShape2D"):
-			var shape = target_node.get_node("CollisionShape2D").shape
-			if shape is CircleShape2D:
-				_highlight_node.size = Vector2(shape.radius * 2, shape.radius * 2)
-			elif shape is RectangleShape2D:
-				_highlight_node.size = shape.size  # Changed from extents to size in Godot 4
-		
-		_highlight_node.visible = true
-		
-		# If this is a clickable target, connect to its pressed signal
-		if TUTORIAL_STEPS[_current_step].required_action == "click":
-			if target_node is BaseButton:
-				if not target_node.is_connected("pressed", _on_target_clicked):
-					target_node.pressed.connect(_on_target_clicked)
-
-func _hide_highlight():
-	"""Hides the highlight node"""
-	if _highlight_node:
-		_highlight_node.visible = false
-		
-	# Disconnect any temporary signals
-	var current_target = ""
-	if TUTORIAL_STEPS.has(_current_step):
-		current_target = TUTORIAL_STEPS[_current_step].target
-	
-	if current_target != "":
-		var target_node = _find_target_node(current_target)
-		if target_node is BaseButton and target_node.is_connected("pressed", _on_target_clicked):
-			target_node.pressed.disconnect(_on_target_clicked)
-
-func _find_target_node(target_id):
-	"""Finds a node based on its tutorial target ID"""
-	match target_id:
-		"garden_button":
-			return get_node_or_null("/root/Main/UILayer/HUD/BottomBar/NavButtons/GardenButton")
-		"workshop_button":
-			return get_node_or_null("/root/Main/UILayer/HUD/BottomBar/NavButtons/WorkshopButton")
-		"inventory_button":
-			return get_node_or_null("/root/Main/UILayer/HUD/BottomBar/InventoryButton")
-		"cauldron_slot":
-			var cauldron = get_node_or_null("/root/Main/Workshop/Stations/Cauldron")
-			if cauldron and cauldron.has_node("IngredientSlots/Slot1"):
-				return cauldron.get_node("IngredientSlots/Slot1")
-		"brew_button":
-			var cauldron = get_node_or_null("/root/Main/Workshop/Stations/Cauldron")
-			if cauldron:
-				return cauldron.get_node("BrewButton")
-		"garden_resource":
-			# Find the first visible resource in the garden
-			var garden = get_node_or_null("/root/Main/GatheringAreas/Garden")
-			if garden and garden.has_node("ResourceNodes"):
-				for child in garden.get_node("ResourceNodes").get_children():
-					if child.visible:
-						return child
-	
-	return null
-
-func _create_highlight_node():
-	"""Creates a highlight node to draw attention to tutorial targets"""
-	_highlight_node = Panel.new()
-	_highlight_node.visible = false
-	
-	# Style the highlight
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.8, 0.3, 0.2)
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(0.2, 0.8, 0.3, 0.8)
-	style.corner_radius_top_left = 5
-	style.corner_radius_top_right = 5
-	style.corner_radius_bottom_right = 5
-	style.corner_radius_bottom_left = 5
-	
-	_highlight_node.add_theme_stylebox_override("panel", style)
-	
-	# Add to UI layer
-	var ui_layer = get_node_or_null("/root/Main/UILayer")
-	if ui_layer:
-		ui_layer.add_child(_highlight_node)
-		
-		# Make sure it's below other UI elements
-		_highlight_node.z_index = -1
-		
-		# Set it to mouse filter pass so it doesn't block interaction
-		_highlight_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
-
-func _show_tutorial_ui(step):
-	"""Shows the tutorial UI with instructions for the current step"""
-	# Find or create tutorial overlay
-	if not _tutorial_overlay:
-		_tutorial_overlay = Panel.new()
-		_tutorial_overlay.name = "TutorialOverlay"
-		_tutorial_overlay.size = Vector2(300, 150)
-		_tutorial_overlay.position = Vector2(20, 100)  # Position near top-left
-		
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.1, 0.1, 0.2, 0.9)
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color(0.3, 0.7, 0.8, 1.0)
-		style.corner_radius_top_left = 10
-		style.corner_radius_top_right = 10
-		style.corner_radius_bottom_right = 10
-		style.corner_radius_bottom_left = 10
-		
-		_tutorial_overlay.add_theme_stylebox_override("panel", style)
-		
-		# Add to UI layer
-		var ui_layer = get_node_or_null("/root/Main/UILayer")
-		if ui_layer:
-			ui_layer.add_child(_tutorial_overlay)
-			
-			# Create content container
-			var container = VBoxContainer.new()
-			container.name = "Content"
-			container.anchor_right = 1.0
-			container.anchor_bottom = 1.0
-			container.margin_left = 10
-			container.margin_top = 10
-			container.margin_right = -10
-			container.margin_bottom = -10
-			_tutorial_overlay.add_child(container)
-			
-			# Title label
-			var title = Label.new()
-			title.name = "Title"
-			title.add_theme_font_size_override("font_size", 18)
-			title.add_theme_color_override("font_color", Color(1, 0.9, 0.5))
-			container.add_child(title)
-			
-			# Message label
-			var message = Label.new()
-			message.name = "Message"
-			message.autowrap_mode = 3  # Enable text wrapping
-			message.size_flags_vertical = Control.SIZE_EXPAND_FILL
-			container.add_child(message)
-			
-			# Next button for acknowledgment
-			var button = Button.new()
-			button.name = "NextButton"
-			button.text = "Next"
-			button.pressed.connect(_on_tutorial_next_pressed)
-			container.add_child(button)
-	
-	# Update content with step info
-	var content = _tutorial_overlay.get_node("Content")
-	content.get_node("Title").text = step.title
-	content.get_node("Message").text = step.message
-	
-	# Show/hide next button based on required action
-	content.get_node("NextButton").visible = (step.required_action == "acknowledge")
-	
-	_tutorial_overlay.visible = true
-
-func _hide_tutorial_ui():
-	"""Hides the tutorial overlay"""
+func _create_tutorial_overlay():
+	"""Creates the tutorial overlay UI"""
 	if _tutorial_overlay:
-		_tutorial_overlay.visible = false
-
-func _is_tutorial_completed():
-	"""Checks if all tutorial steps are completed"""
-	for step_id in _progress:
-		if not _progress[step_id]:
-			return false
-	return true
-
-func _save_tutorial_progress():
-	"""Saves tutorial progress to GameManager"""
-	var game_manager = get_node_or_null("/root/GameManager")
-	if game_manager:
-		# Add tutorial progress to GameManager's save data
-		# This would need to be implemented in GameManager
-		if game_manager.has_method("save_game"):
-			game_manager.save_game()
-
-func _load_tutorial_progress():
-	"""Loads tutorial progress from GameManager"""
-	var game_manager = get_node_or_null("/root/GameManager")
-	if game_manager:
-		# You would implement this based on your save system
-		pass
-
-# Signal handlers
-func _on_new_game():
-	"""Called when a new game is started"""
-	# Reset progress
-	for step_id in TUTORIAL_STEPS:
-		_progress[step_id] = false
+		_tutorial_overlay.queue_free()
 	
-	# Start tutorial automatically for new games
-	call_deferred("start_tutorial")
+	_tutorial_overlay = TUTORIAL_OVERLAY_SCENE.instantiate()
+	get_tree().root.add_child(_tutorial_overlay)
+	
+	# Connect signals
+	_tutorial_overlay.get_node("TutorialPanel/VBoxContainer/ButtonContainer/NextButton").pressed.connect(_on_next_button_pressed)
+	_tutorial_overlay.get_node("TutorialPanel/VBoxContainer/ButtonContainer/SkipButton").pressed.connect(_on_skip_button_pressed)
+	_tutorial_overlay.get_node("ConfirmationDialog").confirmed.connect(_on_skip_confirmed)
+	_tutorial_overlay.get_node("ConfirmationDialog").canceled.connect(_on_skip_canceled)
+	_tutorial_overlay.get_node("CompletionPanel/VBoxContainer/CloseButton").pressed.connect(_on_completion_close_pressed)
 
-func _on_resource_gathered(_resource_id, _quantity, _quality):
-	"""Called when a resource is gathered during the gather step"""
-	if _current_step == "gather_ingredient":
-		# Complete this step if we've gathered enough
-		_complete_step(_current_step)
+func _show_current_step():
+	"""Updates the UI to show the current tutorial step"""
+	if not _tutorial_overlay or _current_step >= _tutorial_steps.size():
+		return
+	
+	var step = _tutorial_steps[_current_step]
+	
+	# Update panel content
+	var title_label = _tutorial_overlay.get_node("TutorialPanel/VBoxContainer/TitleLabel")
+	var step_number = _tutorial_overlay.get_node("TutorialPanel/VBoxContainer/ContentContainer/StepNumber")
+	var message_label = _tutorial_overlay.get_node("TutorialPanel/VBoxContainer/ContentContainer/MessageLabel")
+	var progress_bar = _tutorial_overlay.get_node("TutorialPanel/VBoxContainer/ProgressBar")
+	
+	title_label.text = step.title
+	step_number.text = "Step " + str(_current_step + 1) + " of " + str(_tutorial_steps.size())
+	message_label.text = step.message
+	progress_bar.max_value = _tutorial_steps.size()
+	progress_bar.value = _current_step + 1
+	
+	# Show or hide highlight rect
+	var highlight_rect = _tutorial_overlay.get_node("HighlightRect")
+	if step.highlight_node_path.is_empty():
+		highlight_rect.visible = false
+	else:
+		_target_node = get_node_or_null(step.highlight_node_path)
+		if _target_node:
+			# Position highlight over the target
+			var global_rect = _get_global_rect(_target_node)
+			highlight_rect.size = step.highlight_size
+			highlight_rect.position = global_rect.position - Vector2(10, 10)
+			highlight_rect.size = global_rect.size + Vector2(20, 20)
+			highlight_rect.visible = true
+		else:
+			highlight_rect.visible = false
+	
+	# Show or hide pointer
+	var pointer = _tutorial_overlay.get_node("PointerArrow")
+	var popup_label = _tutorial_overlay.get_node("PopupLabel")
+	
+	if step.pointer_position == Vector2.ZERO:
+		pointer.visible = false
+		popup_label.visible = false
+	else:
+		if _target_node:
+			var target_position = _target_node.global_position
+			pointer.position = target_position + step.pointer_position
+			pointer.rotation = PI  # Point downward by default
+			pointer.visible = true
+			
+			if not step.popup_text.is_empty():
+				popup_label.text = step.popup_text
+				popup_label.position = pointer.position - Vector2(popup_label.size.x / 2, pointer.get_rect().size.y + popup_label.size.y + 10)
+				popup_label.visible = true
+			else:
+				popup_label.visible = false
+		else:
+			pointer.visible = false
+			popup_label.visible = false
+	
+	# Set up waiting for action if needed
+	_waiting_for_action = step.wait_for_action
 
-func _on_ingredient_added(_slot_index, _ingredient_id):
-	"""Called when an ingredient is added to the cauldron"""
-	if _current_step == "add_ingredient":
-		# Complete this step
-		_complete_step(_current_step)
+func _complete_tutorial():
+	"""Completes the tutorial and shows completion screen"""
+	_is_tutorial_active = false
+	_tutorial_completed = true
+	
+	if _tutorial_overlay:
+		# Hide tutorial panel and show completion panel
+		_tutorial_overlay.get_node("TutorialPanel").visible = false
+		_tutorial_overlay.get_node("HighlightRect").visible = false
+		_tutorial_overlay.get_node("PointerArrow").visible = false
+		_tutorial_overlay.get_node("PopupLabel").visible = false
+		_tutorial_overlay.get_node("CompletionPanel").visible = true
+		
+		# Add tutorial reward
+		var game_manager = get_node_or_null("/root/GameManager")
+		if game_manager:
+			game_manager.add_gold(50)
+	
+	tutorial_completed.emit()
 
-func _on_target_clicked():
-	"""Called when the highlighted target is clicked"""
-	if TUTORIAL_STEPS[_current_step].required_action == "click":
-		# Complete this step
-		_complete_step(_current_step)
+func _get_global_rect(node):
+	"""Gets the global rectangle of a Control or Node2D"""
+	if node is Control:
+		return Rect2(node.global_position, node.size)
+	elif node is Node2D:
+		var bounds = Rect2(Vector2.ZERO, Vector2(100, 100))  # Default size
+		if node.has_method("get_rect"):
+			bounds = node.get_rect()
+		return Rect2(node.global_position - bounds.size/2, bounds.size)
+	return Rect2(Vector2.ZERO, Vector2(100, 100))
 
-func _on_tutorial_next_pressed():
-	"""Called when the Next button is pressed on acknowledgment steps"""
-	if TUTORIAL_STEPS[_current_step].required_action == "acknowledge":
-		# Complete this step
-		_complete_step(_current_step)
+func _on_next_button_pressed():
+	"""Handle next button press"""
+	if not _waiting_for_action:
+		next_step()
+
+func _on_skip_button_pressed():
+	"""Handle skip button press"""
+	_tutorial_overlay.get_node("ConfirmationDialog").popup_centered()
+
+func _on_skip_confirmed():
+	"""Handle skip confirmation"""
+	skip_tutorial()
+
+func _on_skip_canceled():
+	"""Handle skip cancellation"""
+	# Nothing to do
+	pass
+
+func _on_completion_close_pressed():
+	"""Handle completion panel close button press"""
+	if _tutorial_overlay:
+		_tutorial_overlay.queue_free()
+		_tutorial_overlay = null

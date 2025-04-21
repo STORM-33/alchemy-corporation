@@ -1,6 +1,5 @@
-[gd_scene load_steps=8 format=3 uid="uid://buxdxcdniqntt"]
+[gd_scene load_steps=7 format=3 uid="uid://drkep0mhoc1tj"]
 
-[ext_resource type="Script" path="res://scenes/ui/weather_display.gd" id="1_qw15v"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_b7ixs"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d8kjm"]
@@ -111,8 +110,8 @@ tracks/2/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_1q8st"]
 _data = {
-"RESET": SubResource("Animation_4j7dt"),
-"weather_change": SubResource("Animation_2qd5p")
+&"RESET": SubResource("Animation_4j7dt"),
+&"weather_change": SubResource("Animation_2qd5p")
 }
 
 [node name="WeatherDisplay" type="Panel"]
@@ -120,7 +119,6 @@ offset_right = 180.0
 offset_bottom = 90.0
 theme = ExtResource("2_b7ixs")
 theme_override_styles/panel = SubResource("StyleBoxFlat_d8kjm")
-script = ExtResource("1_qw15v")
 
 [node name="TimeLabel" type="Label" parent="."]
 layout_mode = 1
@@ -179,8 +177,8 @@ offset_top = 5.0
 offset_right = -5.0
 offset_bottom = 30.0
 grow_horizontal = 0
-theme_override_styles/panel = SubResource("StyleBoxFlat_5f4xq")
 tooltip_text = "Current Season"
+theme_override_styles/panel = SubResource("StyleBoxFlat_5f4xq")
 
 [node name="SeasonIcon" type="TextureRect" parent="SeasonPanel"]
 layout_mode = 1
@@ -228,7 +226,7 @@ vertical_alignment = 1
 
 [node name="WeatherAnimation" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_1q8st")
+&"": SubResource("AnimationLibrary_1q8st")
 }
 
 [node name="DetailPanel" type="Panel" parent="."]

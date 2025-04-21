@@ -1,6 +1,5 @@
-[gd_scene load_steps=9 format=3 uid="uid://b6quwx0a1r43h"]
+[gd_scene load_steps=8 format=3 uid="uid://pe567b4hn4gl"]
 
-[ext_resource type="Script" path="res://scenes/ui/shop_panel.gd" id="1_6q8lr"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_hbckp"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j7c42"]
@@ -92,7 +91,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_hbckp")
 theme_override_styles/panel = SubResource("StyleBoxFlat_j7c42")
-script = ExtResource("1_6q8lr")
 
 [node name="HeaderLabel" type="Label" parent="."]
 layout_mode = 1
@@ -185,9 +183,11 @@ offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 2
 grow_vertical = 2
+current_tab = 0
 
 [node name="Ingredients" type="VBoxContainer" parent="TabContainer"]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="FilterPanel" type="PanelContainer" parent="TabContainer/Ingredients"]
 layout_mode = 2
@@ -237,6 +237,7 @@ columns = 4
 [node name="Recipes" type="VBoxContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="FilterPanel" type="PanelContainer" parent="TabContainer/Recipes"]
 layout_mode = 2
@@ -285,6 +286,7 @@ size_flags_vertical = 3
 [node name="Upgrades" type="VBoxContainer" parent="TabContainer"]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="Label" type="Label" parent="TabContainer/Upgrades"]
 layout_mode = 2

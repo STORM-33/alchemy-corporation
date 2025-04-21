@@ -1,98 +1,164 @@
 extends Node
-## Simple notification system to provide feedback to the player
-## Add this script to an autoload in Project Settings
-
-# Signals
-signal notification_added(message, type)
+## Manages in-game notifications
+## Add this script to an autoload in the Project Settings
 
 # Constants
-const NOTIFICATION_TYPES = {
-	"normal": Color(0.9, 0.9, 0.9),   # Light gray
-	"success": Color(0.4, 0.8, 0.4),  # Green
-	"warning": Color(0.9, 0.7, 0.3),  # Orange
-	"error": Color(0.9, 0.3, 0.3),    # Red
-	"info": Color(0.4, 0.7, 0.9)      # Blue
-}
-
-const DEFAULT_DURATION = 3.0  # Default display time in seconds
-const MAX_NOTIFICATIONS = 5   # Maximum number of notifications to show at once
+const MAX_NOTIFICATIONS = 5
+const NOTIFICATION_SCENE = preload("res://scenes/ui/notification.tscn")
 
 # Private variables
+var _notification_queue = []
 var _active_notifications = []
-var _hud = null
+var _notification_container = null
 
 # Lifecycle methods
 func _ready():
-	# We'll initialize HUD reference when it becomes available
-	call_deferred("_find_hud")
+	# Wait a moment to allow the UI to initialize
+	await get_tree().create_timer(0.5).timeout
+	_find_notification_container()
 
 # Public methods
-func show_notification(message, type="normal", duration=DEFAULT_DURATION):
-	"""
-	Shows a notification to the player
-	- message: Text to display
-	- type: Type of notification (normal, success, warning, error, info)
-	- duration: How long to display the notification
-	"""
-	if message.is_empty():
-		return
-	
-	# Validate notification type
-	if not NOTIFICATION_TYPES.has(type):
-		type = "normal"
-	
-	# Create notification data
-	var notification = {
+func show_notification(message, duration=3.0, type="normal"):
+	"""Shows a notification with the given message and type"""
+	_notification_queue.append({
 		"message": message,
-		"type": type,
 		"duration": duration,
-		"time": Time.get_unix_time_from_system()
-	}
+		"type": type
+	})
 	
-	# Add to active notifications
-	_active_notifications.append(notification)
-	
-	# Limit the number of active notifications
-	while _active_notifications.size() > MAX_NOTIFICATIONS:
-		_active_notifications.pop_front()
-	
-	# Signal that a notification was added
-	notification_added.emit(message, type)
-	
-	# Try to display in HUD if available
-	if _hud and _hud.has_method("show_notification"):
-		_hud.show_notification(message, duration, type)
-	else:
-		# Fallback: Print to console
-		print("Notification (%s): %s" % [type, message])
+	_process_notification_queue()
 
-func show_success(message, duration=DEFAULT_DURATION):
+func show_success(message, duration=3.0):
 	"""Shows a success notification"""
-	show_notification(message, "success", duration)
+	show_notification(message, duration, "success")
 
-func show_warning(message, duration=DEFAULT_DURATION):
-	"""Shows a warning notification"""
-	show_notification(message, "warning", duration)
-
-func show_error(message, duration=DEFAULT_DURATION):
-	"""Shows an error notification"""
-	show_notification(message, "error", duration)
-
-func show_info(message, duration=DEFAULT_DURATION):
+func show_info(message, duration=3.0):
 	"""Shows an info notification"""
-	show_notification(message, "info", duration)
+	show_notification(message, duration, "info")
 
-func clear_notifications():
+func show_warning(message, duration=3.0):
+	"""Shows a warning notification"""
+	show_notification(message, duration, "warning")
+
+func show_error(message, duration=3.0):
+	"""Shows an error notification"""
+	show_notification(message, duration, "error")
+
+func clear_all_notifications():
 	"""Clears all active notifications"""
+	for notification in _active_notifications:
+		if is_instance_valid(notification):
+			notification.queue_free()
+	
 	_active_notifications.clear()
+	_notification_queue.clear()
 
 # Private methods
-func _find_hud():
-	"""Attempts to find the HUD in the scene"""
-	var hud_path = "/root/Main/UILayer/HUD"
-	if has_node(hud_path):
-		_hud = get_node(hud_path)
-	else:
-		# Try again later
-		await get_tree().create_timer(1.0).timeout
-		_find_hud()
+func _find_notification_container():
+	"""Finds the notification container in the scene"""
+	# Try to find it at common paths
+	var possible_paths = [
+		"/root/Main/UILayer/NotificationArea",
+		"/root/Main/UILayer/HUD/NotificationArea",
+		"/root/Main/UI/NotificationArea"
+	]
+	
+	for path in possible_paths:
+		if has_node(path):
+			_notification_container = get_node(path)
+			break
+	
+	# If still not found, search for it
+	if not _notification_container:
+		_notification_container = _find_node_by_name(get_tree().root, "NotificationArea")
+	
+	# Create a container if none exists
+	if not _notification_container:
+		push_warning("Notification container not found, creating one")
+		_create_notification_container()
+
+func _find_node_by_name(node, name):
+	"""Recursively searches for a node with the given name"""
+	if node.name == name:
+		return node
+	
+	for child in node.get_children():
+		var result = _find_node_by_name(child, name)
+		if result:
+			return result
+	
+	return null
+
+func _create_notification_container():
+	"""Creates a notification container if none exists"""
+	_notification_container = VBoxContainer.new()
+	_notification_container.name = "NotificationArea"
+	_notification_container.alignment = BoxContainer.ALIGNMENT_END  # Align to bottom
+	
+	# Set position and size
+	_notification_container.anchors_preset = Control.PRESET_TOP_WIDE
+	_notification_container.offset_top = 100
+	_notification_container.offset_left = 200
+	_notification_container.offset_right = -200
+	_notification_container.offset_bottom = 300
+	
+	# Add to the scene (try to add to the appropriate layer)
+	var ui_layer = _find_node_by_name(get_tree().root, "UILayer")
+	if not ui_layer:
+		ui_layer = get_tree().root
+	
+	ui_layer.add_child(_notification_container)
+
+func _process_notification_queue():
+	"""Processes the notification queue"""
+	if _notification_queue.empty():
+		return
+	
+	if not _notification_container:
+		_find_notification_container()
+		if not _notification_container:
+			push_error("Notification container not found")
+			return
+	
+	# Check if we can show more notifications
+	if _active_notifications.size() >= MAX_NOTIFICATIONS:
+		# Remove notifications that are no longer valid
+		for i in range(_active_notifications.size() - 1, -1, -1):
+			if not is_instance_valid(_active_notifications[i]):
+				_active_notifications.remove_at(i)
+		
+		# Still too many notifications?
+		if _active_notifications.size() >= MAX_NOTIFICATIONS:
+			return
+	
+	# Get the next notification
+	var notification_data = _notification_queue.pop_front()
+	
+	# Create notification instance
+	var notification = NOTIFICATION_SCENE.instantiate()
+	notification.message = notification_data.message
+	notification.duration = notification_data.duration
+	notification.type = notification_data.type
+	
+	# Connect signal to remove from active list when finished
+	notification.notification_ended.connect(_on_notification_ended.bind(notification))
+	
+	# Add to container
+	_notification_container.add_child(notification)
+	_active_notifications.append(notification)
+	
+	# Process more notifications if available
+	if not _notification_queue.empty():
+		await get_tree().create_timer(0.2).timeout
+		_process_notification_queue()
+
+func _on_notification_ended(notification):
+	"""Called when a notification is finished"""
+	var index = _active_notifications.find(notification)
+	if index >= 0:
+		_active_notifications.remove_at(index)
+	
+	# Process more notifications if any are waiting
+	if not _notification_queue.empty():
+		await get_tree().create_timer(0.2).timeout
+		_process_notification_queue()

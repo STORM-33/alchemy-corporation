@@ -1,52 +1,62 @@
 extends Resource
+## Resource class for ingredient definitions
+## Ingredients are the building blocks for brewing potions
+
 class_name Ingredient
-## Resource class for storing ingredient data
 
 # Properties
-@export var id: String = ""  # Unique identifier
-@export var name: String = ""  # Display name
-@export var description: String = ""  # Description text
-@export var category: String = "common_plants"  # Ingredient category
-@export var base_value: int = 1  # Base gold value
-@export var rarity: int = 1  # 1 (common) to 5 (legendary)
-@export var regeneration_time: float = 120.0  # Time in seconds to regenerate
-@export var properties: Dictionary = {}  # Properties like "healing", "binding", etc.
-@export var gathering_requirements: Array = []  # Special requirements to gather
-@export var seasonal: bool = false  # Whether this is a seasonal ingredient
-@export var season: String = ""  # If seasonal, which season it appears in
+@export var id: String
+@export var name: String
+@export var description: String
+@export var category: String
+@export var base_value: int = 1
+@export var rarity: int = 1
+@export var regeneration_time: float = 120.0
+@export var properties: Dictionary = {}
+@export var gathering_requirements: Array = []
+@export var seasonal: bool = false
+@export var season: String = ""
 
-# Methods
-func _init(p_id="", p_name="", p_description="", p_category="common_plants", 
-		   p_base_value=1, p_rarity=1, p_regen_time=120.0, p_properties={}):
+# Constructor
+func _init(p_id="", p_name="", p_description="", p_category="", p_value=1, p_rarity=1, p_regen_time=120.0, p_properties={}):
 	id = p_id
 	name = p_name
 	description = p_description
 	category = p_category
-	base_value = p_base_value
+	base_value = p_value
 	rarity = p_rarity
 	regeneration_time = p_regen_time
 	properties = p_properties
 
-func get_icon_path() -> String:
-	"""Returns the path to this ingredient's icon"""
-	return "res://assets/images/ingredients/%s/%s.png" % [category, id]
+# Load from dictionary
+func from_dict(data):
+	if data.has("id"):
+		id = data.id
+	if data.has("name"):
+		name = data.name
+	if data.has("description"):
+		description = data.description
+	if data.has("category"):
+		category = data.category
+	if data.has("base_value"):
+		base_value = data.base_value
+	if data.has("rarity"):
+		rarity = data.rarity
+	if data.has("regeneration_time"):
+		regeneration_time = data.regeneration_time
+	if data.has("properties"):
+		properties = data.properties
+	if data.has("gathering_requirements"):
+		gathering_requirements = data.gathering_requirements
+	if data.has("seasonal"):
+		seasonal = data.seasonal
+	if data.has("season"):
+		season = data.season
+	
+	return self
 
-func get_adjusted_value(quality=1.0) -> int:
-	"""Returns the adjusted value based on quality and rarity"""
-	return int(base_value * quality * rarity)
-
-func has_property(property_name: String) -> bool:
-	"""Checks if the ingredient has the given property"""
-	return property_name in properties
-
-func get_property_strength(property_name: String) -> float:
-	"""Gets the strength of a specific property"""
-	if property_name in properties:
-		return properties[property_name]
-	return 0
-
-func to_dict() -> Dictionary:
-	"""Convert ingredient to dictionary for saving"""
+# Convert to dictionary
+func to_dict():
 	return {
 		"id": id,
 		"name": name,
@@ -61,21 +71,35 @@ func to_dict() -> Dictionary:
 		"season": season
 	}
 
-func from_dict(data: Dictionary) -> Ingredient:
-	"""Load ingredient from dictionary data"""
-	id = data.get("id", "")
-	name = data.get("name", "")
-	description = data.get("description", "")
-	category = data.get("category", "common_plants")
-	base_value = data.get("base_value", 1)
-	rarity = data.get("rarity", 1)
-	regeneration_time = data.get("regeneration_time", 120.0)
-	properties = data.get("properties", {})
-	gathering_requirements = data.get("gathering_requirements", [])
-	seasonal = data.get("seasonal", false)
-	season = data.get("season", "")
-	return self
+# Get the path to the ingredient's icon
+func get_icon_path() -> String:
+	return "res://assets/images/ingredients/%s/%s.png" % [category, id]
 
-func _to_string() -> String:
-	"""Returns a string representation of the ingredient for debugging"""
-	return "%s (Rarity: %d, Value: %d)" % [name, rarity, base_value]
+# Calculate sell value (potentially affected by quality)
+func get_sell_value(quality = 1.0) -> int:
+	return int(base_value * quality)
+
+# Check if ingredient meets gathering requirements
+func can_gather(player_stats, current_time, current_weather) -> bool:
+	for requirement in gathering_requirements:
+		match requirement:
+			"dawn_only":
+				# Check if it's dawn (6am-8am)
+				var hour = current_time.hour
+				if hour < 6 or hour > 8:
+					return false
+			"night_only":
+				# Check if it's night (8pm-5am)
+				var hour = current_time.hour
+				if hour > 5 and hour < 20:
+					return false
+			"special_tool":
+				# Check if player has the required tool
+				if not player_stats.has_tool(id.replace("ing_", "tool_")):
+					return false
+	
+	# Check if seasonal and whether it's the right season
+	if seasonal and season != current_weather.season:
+		return false
+	
+	return true

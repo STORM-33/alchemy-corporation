@@ -1,6 +1,5 @@
-[gd_scene load_steps=10 format=3 uid="uid://w46ytogvlrna"]
+[gd_scene load_steps=9 format=3 uid="uid://r851r33u0cjh"]
 
-[ext_resource type="Script" path="res://scenes/ui/villager_order_panel.gd" id="1_3kj6s"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_xm26j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i1c2v"]
@@ -111,8 +110,8 @@ tracks/1/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_a04yt"]
 _data = {
-"RESET": SubResource("Animation_6iyxm"),
-"order_completed": SubResource("Animation_i5xhw")
+&"RESET": SubResource("Animation_6iyxm"),
+&"order_completed": SubResource("Animation_i5xhw")
 }
 
 [node name="VillagerOrderPanel" type="Panel"]
@@ -129,7 +128,6 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("2_xm26j")
 theme_override_styles/panel = SubResource("StyleBoxFlat_i1c2v")
-script = ExtResource("1_3kj6s")
 
 [node name="HeaderLabel" type="Label" parent="."]
 layout_mode = 1
@@ -429,5 +427,5 @@ text = "Great!"
 
 [node name="VillagerAnimations" type="AnimationPlayer" parent="."]
 libraries = {
-"": SubResource("AnimationLibrary_a04yt")
+&"": SubResource("AnimationLibrary_a04yt")
 }
