@@ -1,0 +1,78 @@
+[
+  {
+    "id": "pot_minor_healing",
+    "name": "Minor Healing Potion",
+    "description": "A simple potion that heals minor wounds.",
+    "category": "healing",
+    "base_value": 5,
+    "properties": {
+      "healing": 1.0,
+      "duration": 0.5
+    }
+  },
+  {
+    "id": "pot_cooling_salve",
+    "name": "Cooling Salve",
+    "description": "A soothing balm for burns and inflammation.",
+    "category": "healing",
+    "base_value": 8,
+    "properties": {
+      "healing": 0.7,
+      "cooling": 1.2,
+      "duration": 1.0
+    }
+  },
+  {
+    "id": "pot_polishing_solution",
+    "name": "Polishing Solution",
+    "description": "Used for cleaning and polishing metal objects.",
+    "category": "utility",
+    "base_value": 4,
+    "properties": {
+      "cleaning": 1.0,
+      "preservation": 0.5
+    }
+  },
+  {
+    "id": "pot_clarity",
+    "name": "Clarity Potion",
+    "description": "Enhances mental focus and clarity of thought.",
+    "category": "mind",
+    "base_value": 10,
+    "properties": {
+      "clarity": 1.2,
+      "focus": 0.8,
+      "duration": 1.5
+    }
+  },
+  {
+    "id": "pot_strength_tonic",
+    "name": "Strength Tonic",
+    "description": "Temporarily boosts physical strength.",
+    "category": "transformation",
+    "base_value": 12,
+    "properties": {
+      "strength": 1.5,
+      "duration": 2.0,
+      "energy": 0.7
+    }
+  },
+  {
+    "id": "pot_unknown_mixture",
+    "name": "Unknown Mixture",
+    "description": "An unidentified concoction. Effects unknown.",
+    "category": "utility",
+    "base_value": 1,
+    "properties": {}
+  },
+  {
+    "id": "pot_failed_experiment",
+    "name": "Failed Experiment",
+    "description": "A failed brewing attempt. Possibly useful as a reagent.",
+    "category": "utility",
+    "base_value": 1,
+    "properties": {
+      "reagent": 0.5
+    }
+  }
+]

@@ -23,12 +23,15 @@ var _unlocked_stations = []
 
 # Lifecycle methods
 func _ready():
-	# Connect interaction areas
-	# In Godot 4, we use signal.connect() and bind() for parameters
-	_cauldron_area.input_event.connect(_on_station_input.bind("cauldron"))
-	_distillery_area.input_event.connect(_on_station_input.bind("distillery"))
-	_herb_area.input_event.connect(_on_station_input.bind("herb_station"))
-	_study_area.input_event.connect(_on_station_input.bind("study_table"))
+	# Connect interaction areas - using Godot 4 signal connection
+	if _cauldron_area:
+		_cauldron_area.input_event.connect(_on_station_input.bind("cauldron"))
+	if _distillery_area:
+		_distillery_area.input_event.connect(_on_station_input.bind("distillery"))
+	if _herb_area:
+		_herb_area.input_event.connect(_on_station_input.bind("herb_station"))
+	if _study_area:
+		_study_area.input_event.connect(_on_station_input.bind("study_table"))
 	
 	# Get unlocked stations from GameManager
 	var game_manager = get_node_or_null("/root/GameManager")
@@ -42,8 +45,13 @@ func _ready():
 	_update_station_visibility()
 	
 	# Connect station signals
-	if _cauldron and _cauldron.has_method("connect"):
+	if _cauldron:
+		_cauldron.brewing_started.connect(_on_brewing_started)
 		_cauldron.brewing_completed.connect(_on_brewing_completed)
+	
+	# Default to cauldron as starting station
+	if "cauldron" in _unlocked_stations:
+		select_station("cauldron")
 
 # Public methods
 func select_station(station_name):
@@ -86,6 +94,11 @@ func unlock_station(station_name):
 	
 	_unlocked_stations.append(station_name)
 	_update_station_visibility()
+	
+	# Notify the player
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_success("Unlocked new station: " + station_name.capitalize())
 	
 	return true
 
@@ -156,6 +169,39 @@ func _get_station_node(station_name):
 	
 	return null
 
+func _on_brewing_started(recipe_id):
+	"""Handle brewing start from any station"""
+	var recipe_manager = get_node_or_null("/root/RecipeManager")
+	var recipe_name = "Unknown Recipe"
+	
+	if recipe_manager and recipe_id != "":
+		var recipe = recipe_manager.get_recipe(recipe_id)
+		if recipe:
+			recipe_name = recipe.name
+	
+	# Show notification
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_info("Brewing " + recipe_name + "...")
+	
+	brewing_started.emit(recipe_name)
+
 func _on_brewing_completed(potion_id, potion_name, quality):
 	"""Handle brewing completion from any station"""
+	# Format quality as percentage
+	var quality_percent = int(quality * 100)
+	var quality_text = ""
+	
+	if quality >= 1.5:
+		quality_text = "Excellent quality (" + str(quality_percent) + "%)"
+	elif quality >= 1.0:
+		quality_text = "Good quality (" + str(quality_percent) + "%)"
+	else:
+		quality_text = "Poor quality (" + str(quality_percent) + "%)"
+	
+	# Show notification
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_success("Created " + potion_name + "\n" + quality_text)
+	
 	brewing_completed.emit(potion_name, quality)

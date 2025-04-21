@@ -45,7 +45,7 @@ func spawn_resource(resource_id, area_id):
 	Returns the unique node_id if successful, or empty string if failed
 	"""
 	# Ensure we have spawn locations for this area
-	if not _spawn_locations.has(area_id) or _spawn_locations[area_id].empty():
+	if not _spawn_locations.has(area_id) or _spawn_locations[area_id].is_empty():
 		return ""
 	
 	# Get a random spawn position

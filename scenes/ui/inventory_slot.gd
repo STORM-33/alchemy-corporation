@@ -45,7 +45,7 @@ func set_quantity(new_quantity):
 	quantity = new_quantity
 	
 	_update_display()
-	emit_signal("quantity_changed", quantity)
+	quantity_changed.emit(quantity)
 
 func set_quality(new_quality):
 	"""Updates the item quality"""
@@ -65,8 +65,8 @@ func get_drag_data(_position):
 	# Create drag preview
 	var preview = TextureRect.new()
 	preview.texture = texture
-	preview.rect_min_size = Vector2(50, 50)
-	preview.expand = true
+	preview.custom_minimum_size = Vector2(50, 50)
+	preview.expand_mode = 1
 	
 	# Set drag preview
 	set_drag_preview(preview)
@@ -126,7 +126,6 @@ func _get_item_texture(p_item_id):
 				texture_path = ingredient.get_icon_path()
 	elif p_item_id.begins_with("pot_"):
 		# For potions we need a different path
-		# This would need to be implemented based on your potion system
 		var recipe_manager = get_node_or_null("/root/RecipeManager")
 		if recipe_manager:
 			var potion = recipe_manager.get_potion(p_item_id)
@@ -138,4 +137,4 @@ func _get_item_texture(p_item_id):
 		return load(texture_path)
 	
 	# Return default/placeholder texture if not found
-	return preload("res://assets/images/ui/icons/unknown_item.png")
+	return load("res://assets/images/ui/icons/unknown_item.png")

@@ -34,7 +34,7 @@ func show_notification(message, type="normal", duration=DEFAULT_DURATION):
 	- type: Type of notification (normal, success, warning, error, info)
 	- duration: How long to display the notification
 	"""
-	if message.empty():
+	if message.is_empty():
 		return
 	
 	# Validate notification type

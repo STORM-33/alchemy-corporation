@@ -30,17 +30,22 @@ func set_selected(is_selected: bool):
 	if is_selected:
 		add_theme_color_override("font_color", Color(0.2, 0.8, 0.4))
 		add_theme_color_override("font_pressed_color", Color(0.2, 0.8, 0.4))
-		_category_indicator.modulate = Color(1, 1, 1, 1)
+		if _category_indicator:
+			_category_indicator.modulate = Color(1, 1, 1, 1)
 	else:
 		remove_theme_color_override("font_color")
 		remove_theme_color_override("font_pressed_color")
-		_category_indicator.modulate = Color(1, 1, 1, 0.5)
+		if _category_indicator:
+			_category_indicator.modulate = Color(1, 1, 1, 0.5)
 
 func set_brewable(brewable: bool):
 	"""Sets whether this recipe can be brewed with current ingredients"""
 	is_brewable = brewable
 	if _recipe_status:
 		_recipe_status.visible = is_brewable
+		
+		# Update tooltip
+		tooltip_text = "Can be brewed with current ingredients" if is_brewable else ""
 
 # Private methods
 func update_display():
@@ -65,3 +70,7 @@ func update_display():
 				category_color = Color(0.8, 0.8, 0.4)  # Yellow
 		
 		_category_indicator.color = category_color
+		
+	# Update brewable status
+	if _recipe_status:
+		_recipe_status.visible = is_brewable

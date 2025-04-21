@@ -23,6 +23,8 @@ const BASE_BREWING_TIME = 10.0  # Seconds
 @onready var _brewing_particles = $BrewingParticles
 @onready var _brewing_timer = $BrewingTimer
 @onready var _ingredient_slots = $IngredientSlots
+@onready var _brew_button = $BrewButton
+@onready var _progress_bar = $ProgressBar
 
 # Private variables
 var _current_ingredients = []  # List of ingredient IDs
@@ -42,11 +44,19 @@ func _ready():
 	if _brewing_timer:
 		_brewing_timer.timeout.connect(_on_brewing_completed)
 	
+	# Connect brew button
+	if _brew_button:
+		_brew_button.pressed.connect(_on_brew_button_pressed)
+	
 	# Connect ingredient slot signals
 	for i in range(1, MAX_INGREDIENTS + 1):
 		var slot = _ingredient_slots.get_node_or_null("Slot" + str(i))
 		if slot:
 			slot.gui_input.connect(_on_slot_input.bind(i-1))
+	
+	# Hide progress bar initially
+	if _progress_bar:
+		_progress_bar.visible = false
 	
 	# Get station level from GameManager
 	var game_manager = get_node_or_null("/root/GameManager")
@@ -58,8 +68,10 @@ func _ready():
 
 # Process for updating brewing progress visuals
 func _process(delta):
-	if _is_brewing:
+	if _is_brewing and _brewing_timer and _brewing_timer.time_left > 0:
 		_brewing_progress = 1.0 - (_brewing_timer.time_left / _brewing_timer.wait_time)
+		if _progress_bar:
+			_progress_bar.value = _brewing_progress
 		brewing_progress.emit(_brewing_progress)
 
 # Public methods
@@ -182,8 +194,15 @@ func brew_potion(recipe_id = "", custom_ingredients = null):
 	if _brewing_particles:
 		_brewing_particles.emitting = true
 	
+	# Show and update progress bar
+	if _progress_bar:
+		_progress_bar.visible = true
+		_progress_bar.value = 0
+	
 	# Start timer
-	_brewing_timer.start(brewing_time)
+	if _brewing_timer:
+		_brewing_timer.wait_time = brewing_time
+		_brewing_timer.start()
 	
 	# Start processing for progress updates
 	set_process(true)
@@ -204,13 +223,18 @@ func stop_brewing():
 	if not _is_brewing:
 		return false
 	
-	_brewing_timer.stop()
+	if _brewing_timer:
+		_brewing_timer.stop()
+	
 	_is_brewing = false
 	
 	# Reset visuals
 	_update_liquid_display(idle_liquid_color)
 	if _brewing_particles:
 		_brewing_particles.emitting = false
+	
+	if _progress_bar:
+		_progress_bar.visible = false
 	
 	set_process(false)
 	
@@ -262,8 +286,12 @@ func _get_ingredient_texture(ingredient_id):
 			var texture_path = ingredient.get_icon_path()
 			if ResourceLoader.exists(texture_path):
 				return load(texture_path)
+			else:
+				# Return a placeholder if the specific texture doesn't exist
+				return load("res://assets/images/ui/icons/unknown_item.png")
 	
-	return null
+	# Default fallback
+	return load("res://assets/images/ui/icons/unknown_item.png")
 
 func _find_matching_recipe(ingredients):
 	"""Tries to find a recipe matching the current ingredients"""
@@ -305,10 +333,18 @@ func _on_brewing_completed():
 	if _brewing_particles:
 		_brewing_particles.emitting = false
 	
+	if _progress_bar:
+		_progress_bar.visible = false
+	
 	# Generate potion
 	var inventory_manager = get_node_or_null("/root/InventoryManager")
 	if inventory_manager and result.success:
 		inventory_manager.add_item(result.potion_id, 1, result.quality)
+		
+		# Notify the player
+		var notification_system = get_node_or_null("/root/NotificationSystem")
+		if notification_system:
+			notification_system.show_success("Created " + result.potion_name)
 	
 	# Clear ingredients if successful
 	if result.success:
@@ -362,6 +398,10 @@ func _calculate_brewing_result():
 			
 			result.quality = base_quality + random_factor + level_bonus + spec_bonus
 			result.quality = clamp(result.quality, 0.5, 2.0)  # Between 50% and 200%
+			
+			# Discover the recipe if it was found by experiment
+			if not recipe.discovered:
+				recipe_manager.discover_recipe(recipe.id)
 	else:
 		# Experimental brewing - to be expanded with property system
 		result.success = !can_fail || (randf() > 0.3)  # 30% chance of failure if can_fail is true
@@ -385,5 +425,27 @@ func _on_slot_input(event, slot_index):
 			# Right click - show info about ingredient
 			if slot_index < _current_ingredients.size():
 				var ingredient_id = _current_ingredients[slot_index]
-				# Show ingredient info (would be connected to UI system)
-				print("Show info for: ", ingredient_id)
+				
+				# Show ingredient info via notification system
+				var ingredient_manager = get_node_or_null("/root/IngredientManager")
+				var notification_system = get_node_or_null("/root/NotificationSystem")
+				
+				if ingredient_manager and notification_system:
+					var ingredient = ingredient_manager.get_ingredient(ingredient_id)
+					if ingredient:
+						notification_system.show_info(ingredient.name + ": " + ingredient.description)
+
+func _on_brew_button_pressed():
+	"""Handles brew button press"""
+	if _is_brewing:
+		return
+	
+	if _current_ingredients.empty():
+		# Notify the player they need ingredients
+		var notification_system = get_node_or_null("/root/NotificationSystem")
+		if notification_system:
+			notification_system.show_warning("Add ingredients first!")
+		return
+	
+	# Start brewing
+	brew_potion()

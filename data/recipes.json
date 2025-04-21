@@ -1,0 +1,87 @@
+[
+  {
+    "id": "recipe_minor_healing",
+    "name": "Minor Healing Potion",
+    "description": "A simple potion that heals minor wounds.",
+    "category": "healing",
+    "ingredients": ["ing_chamomile", "ing_pure_water"],
+    "result_id": "pot_minor_healing",
+    "difficulty": 1,
+    "discovered": true,
+    "properties": {
+      "healing": 1.0,
+      "duration": 0.5
+    },
+    "requirements": {},
+    "experimental": false
+  },
+  {
+    "id": "recipe_cooling_salve",
+    "name": "Cooling Salve",
+    "description": "A soothing balm for burns and inflammation.",
+    "category": "healing",
+    "ingredients": ["ing_mint", "ing_clay", "ing_pure_water"],
+    "result_id": "pot_cooling_salve",
+    "difficulty": 2,
+    "discovered": false,
+    "properties": {
+      "healing": 0.7,
+      "cooling": 1.2,
+      "duration": 1.0
+    },
+    "requirements": {},
+    "experimental": false
+  },
+  {
+    "id": "recipe_polishing_solution",
+    "name": "Polishing Solution",
+    "description": "Used for cleaning and polishing metal objects.",
+    "category": "utility",
+    "ingredients": ["ing_salt", "ing_lavender", "ing_pure_water"],
+    "result_id": "pot_polishing_solution",
+    "difficulty": 1,
+    "discovered": false,
+    "properties": {
+      "cleaning": 1.0,
+      "preservation": 0.5
+    },
+    "requirements": {},
+    "experimental": false
+  },
+  {
+    "id": "recipe_clarity_potion",
+    "name": "Clarity Potion",
+    "description": "Enhances mental focus and clarity of thought.",
+    "category": "mind",
+    "ingredients": ["ing_sage", "ing_quartz_dust", "ing_pure_water"],
+    "result_id": "pot_clarity",
+    "difficulty": 2,
+    "discovered": false,
+    "properties": {
+      "clarity": 1.2,
+      "focus": 0.8,
+      "duration": 1.5
+    },
+    "requirements": {},
+    "experimental": false
+  },
+  {
+    "id": "recipe_strength_tonic",
+    "name": "Strength Tonic",
+    "description": "Temporarily boosts physical strength.",
+    "category": "transformation",
+    "ingredients": ["ing_iron_filings", "ing_mushrooms", "ing_sulfur"],
+    "result_id": "pot_strength_tonic",
+    "difficulty": 3,
+    "discovered": false,
+    "properties": {
+      "strength": 1.5,
+      "duration": 2.0,
+      "energy": 0.7
+    },
+    "requirements": {
+      "station_level": 2
+    },
+    "experimental": false
+  }
+]

@@ -7,7 +7,7 @@ class_name Recipe
 @export var name: String = ""  # Display name
 @export var description: String = ""  # Description text
 @export var category: String = "healing"  # Recipe category
-@export var ingredients: Array[String] = []  # Required ingredient IDs
+@export var ingredients: Array = []  # Required ingredient IDs
 @export var result_id: String = ""  # ID of produced potion
 @export var difficulty: int = 1  # 1 (easy) to 5 (very hard)
 @export var discovered: bool = false  # Whether player has discovered this recipe

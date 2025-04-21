@@ -24,9 +24,23 @@ func _ready():
 	_scenes.garden = $GatheringAreas/Garden
 	_scenes.forest_edge = $GatheringAreas/ForestEdge
 	
-	# Connect signals
+	# Connect custom buttons in HUD for scene changes
+	# Note: We're connecting to individual buttons rather than a non-existent signal
 	if _hud:
-		_hud.scene_change_requested.connect(_change_scene)
+		if _hud.has_node("BottomBar/NavButtons/WorkshopButton"):
+			_hud.get_node("BottomBar/NavButtons/WorkshopButton").pressed.connect(
+				func(): _change_scene("workshop")
+			)
+		
+		if _hud.has_node("BottomBar/NavButtons/GardenButton"):
+			_hud.get_node("BottomBar/NavButtons/GardenButton").pressed.connect(
+				func(): _change_scene("garden")
+			)
+			
+		if _hud.has_node("BottomBar/NavButtons/ForestButton"):
+			_hud.get_node("BottomBar/NavButtons/ForestButton").pressed.connect(
+				func(): _change_scene("forest_edge")
+			)
 	
 	# Set up initial scene
 	_update_visible_scene(_current_scene)
@@ -83,8 +97,16 @@ func _update_visible_scene(scene_name: String) -> void:
 		_current_scene = scene_name
 	
 	# Update HUD to reflect current scene
-	if _hud:
+	if _hud and _hud.has_method("update_current_scene"):
 		_hud.update_current_scene(scene_name)
+	
+	# Emit a signal to the scene being entered
+	if scene_name == "garden" and _scenes.garden:
+		if _scenes.garden.has_method("emit_signal") and _scenes.garden.has_signal("area_entered"):
+			_scenes.garden.emit_signal("area_entered")
+	elif scene_name == "forest_edge" and _scenes.forest_edge:
+		if _scenes.forest_edge.has_method("emit_signal") and _scenes.forest_edge.has_signal("area_entered"):
+			_scenes.forest_edge.emit_signal("area_entered")
 
 func _initialize_gathering_areas() -> void:
 	"""Sets up gathering areas with resource spawn points"""
@@ -97,7 +119,7 @@ func _initialize_gathering_areas() -> void:
 	if _scenes.garden:
 		# Get spawn positions from children named SpawnPoint
 		for child in _scenes.garden.get_children():
-			if child.name.begins_with("SpawnPoint") and child is Marker2D:  # Changed from Position2D to Marker2D
+			if child.name.begins_with("SpawnPoint") and child is Marker2D:
 				garden_positions.append(child.global_position)
 		
 		# Initialize garden with spawn points
@@ -112,7 +134,7 @@ func _initialize_gathering_areas() -> void:
 	if _scenes.forest_edge:
 		# Get spawn positions from children named SpawnPoint
 		for child in _scenes.forest_edge.get_children():
-			if child.name.begins_with("SpawnPoint") and child is Marker2D:  # Changed from Position2D to Marker2D
+			if child.name.begins_with("SpawnPoint") and child is Marker2D:
 				forest_positions.append(child.global_position)
 		
 		# Initialize forest with spawn points
@@ -121,6 +143,11 @@ func _initialize_gathering_areas() -> void:
 			forest_positions, 
 			["ing_mushrooms", "ing_clay"]  # Initial resources
 		)
+	
+	# Notify with successful initialization
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_info("Game world initialized")
 
 func _on_game_initialized() -> void:
 	"""Called when a new game is started"""
@@ -131,8 +158,18 @@ func _on_game_initialized() -> void:
 	var gathering_system = get_node_or_null("/root/GatheringSystem")
 	if gathering_system:
 		gathering_system.refresh_daily_resources()
+	
+	# Welcome notification
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_success("Welcome to your Alchemy Workshop!")
 
 func _on_game_loaded() -> void:
 	"""Called when a game is loaded"""
 	# Similar to game initialized, but might have different logic
 	_on_game_initialized()
+	
+	# Welcome back notification
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system:
+		notification_system.show_success("Welcome back to your workshop!")
