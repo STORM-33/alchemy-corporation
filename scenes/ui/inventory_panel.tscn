@@ -1,37 +1,93 @@
-[gd_scene load_steps=2 format=3 uid="uid://0ga15t3y2fvk"]
+[gd_scene load_steps=3 format=3 uid="uid://0ga15t3y2fvk"]
 
 [ext_resource type="Script" uid="uid://dav31jiytfad0" path="res://inventory_pannel.gd" id="1_7ck5g"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_abcde"]
 
 [node name="InventoryPanel" type="Panel"]
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_abcde")
 script = ExtResource("1_7ck5g")
 
 [node name="HeaderLabel" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 20
+text = "Inventory (0/20)"
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[node name="CloseButton" type="TextureButton" parent="."]
-layout_mode = 0
-offset_right = 40.0
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = 10.0
+offset_right = -10.0
 offset_bottom = 40.0
+grow_horizontal = 0
+text = "X"
 
 [node name="TabContainer" type="TabContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 50.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
 current_tab = 0
 
-[node name="Ingradients" type="VBoxContainer" parent="TabContainer"]
+[node name="Ingredients" type="VBoxContainer" parent="TabContainer"]
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="FilterOptions" type="HBoxContainer" parent="TabContainer/Ingradients"]
+[node name="FilterOptions" type="HBoxContainer" parent="TabContainer/Ingredients"]
 layout_mode = 2
+alignment = 1
 
-[node name="ItemGrid" type="GridContainer" parent="TabContainer/Ingradients"]
+[node name="AllButton" type="Button" parent="TabContainer/Ingredients/FilterOptions"]
 layout_mode = 2
+text = "All"
+
+[node name="PlantsButton" type="Button" parent="TabContainer/Ingredients/FilterOptions"]
+layout_mode = 2
+text = "Plants"
+
+[node name="MineralsButton" type="Button" parent="TabContainer/Ingredients/FilterOptions"]
+layout_mode = 2
+text = "Minerals"
+
+[node name="SpecialButton" type="Button" parent="TabContainer/Ingredients/FilterOptions"]
+layout_mode = 2
+text = "Special"
+
+[node name="ItemGrid" type="GridContainer" parent="TabContainer/Ingredients"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 5
 
 [node name="Potions" type="VBoxContainer" parent="TabContainer"]
 visible = false
@@ -40,36 +96,127 @@ metadata/_tab_index = 1
 
 [node name="FilterOptions" type="HBoxContainer" parent="TabContainer/Potions"]
 layout_mode = 2
+alignment = 1
+
+[node name="AllButton" type="Button" parent="TabContainer/Potions/FilterOptions"]
+layout_mode = 2
+text = "All"
+
+[node name="HealingButton" type="Button" parent="TabContainer/Potions/FilterOptions"]
+layout_mode = 2
+text = "Healing"
+
+[node name="UtilityButton" type="Button" parent="TabContainer/Potions/FilterOptions"]
+layout_mode = 2
+text = "Utility"
+
+[node name="OtherButton" type="Button" parent="TabContainer/Potions/FilterOptions"]
+layout_mode = 2
+text = "Other"
 
 [node name="ItemGrid" type="GridContainer" parent="TabContainer/Potions"]
 layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/h_separation = 10
+theme_override_constants/v_separation = 10
+columns = 5
 
 [node name="ItemInfoPanel" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -150.0
+offset_right = 250.0
+offset_bottom = 150.0
+grow_horizontal = 0
+grow_vertical = 2
 
 [node name="ItemIcon" type="TextureRect" parent="ItemInfoPanel"]
-layout_mode = 0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.0
+offset_top = 20.0
 offset_right = 40.0
-offset_bottom = 40.0
+offset_bottom = 100.0
+grow_horizontal = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="ItemName" type="Label" parent="ItemInfoPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 110.0
+offset_right = 100.0
+offset_bottom = 140.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 18
+text = "Item Name"
+horizontal_alignment = 1
 
 [node name="ItemDescription" type="Label" parent="ItemInfoPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -120.0
+offset_top = -40.0
+offset_right = 120.0
+offset_bottom = 30.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Item description text goes here. This is a very useful item."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
 
 [node name="ItemProperties" type="VBoxContainer" parent="ItemInfoPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = 40.0
+offset_right = 100.0
+offset_bottom = 100.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
 
 [node name="ActionButtons" type="HBoxContainer" parent="ItemInfoPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -100.0
+offset_top = -50.0
+offset_right = 100.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+alignment = 1
+
+[node name="UseButton" type="Button" parent="ItemInfoPanel/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Use"
+
+[node name="DropButton" type="Button" parent="ItemInfoPanel/ActionButtons"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Drop"

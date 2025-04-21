@@ -1,194 +1,194 @@
 [
   {
-    "id": "ing_lavender",
-    "name": "Lavender",
-    "description": "A fragrant purple flower with calming properties.",
-    "category": "common_plants",
-    "base_value": 2,
-    "rarity": 1,
-    "regeneration_time": 120.0,
-    "properties": {
-      "calming": 1.0,
-      "aromatic": 0.8
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_lavender",
+	"name": "Lavender",
+	"description": "A fragrant purple flower with calming properties.",
+	"category": "common_plants",
+	"base_value": 2,
+	"rarity": 1,
+	"regeneration_time": 120.0,
+	"properties": {
+	  "calming": 1.0,
+	  "aromatic": 0.8
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_sage",
-    "name": "Sage",
-    "description": "A culinary and medicinal herb with clarity properties.",
-    "category": "common_plants",
-    "base_value": 3,
-    "rarity": 1,
-    "regeneration_time": 180.0,
-    "properties": {
-      "clarity": 1.0,
-      "purifying": 0.7
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_sage",
+	"name": "Sage",
+	"description": "A culinary and medicinal herb with clarity properties.",
+	"category": "common_plants",
+	"base_value": 3,
+	"rarity": 1,
+	"regeneration_time": 180.0,
+	"properties": {
+	  "clarity": 1.0,
+	  "purifying": 0.7
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_mint",
-    "name": "Mint",
-    "description": "A refreshing herb with energy-boosting properties.",
-    "category": "common_plants",
-    "base_value": 2,
-    "rarity": 1,
-    "regeneration_time": 120.0,
-    "properties": {
-      "energy": 1.0,
-      "cooling": 0.9
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_mint",
+	"name": "Mint",
+	"description": "A refreshing herb with energy-boosting properties.",
+	"category": "common_plants",
+	"base_value": 2,
+	"rarity": 1,
+	"regeneration_time": 120.0,
+	"properties": {
+	  "energy": 1.0,
+	  "cooling": 0.9
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_mushrooms",
-    "name": "Mushrooms",
-    "description": "Forest fungi with transformative properties.",
-    "category": "common_plants",
-    "base_value": 4,
-    "rarity": 2,
-    "regeneration_time": 300.0,
-    "properties": {
-      "transformation": 1.0,
-      "growth": 0.6
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_mushrooms",
+	"name": "Mushrooms",
+	"description": "Forest fungi with transformative properties.",
+	"category": "common_plants",
+	"base_value": 4,
+	"rarity": 2,
+	"regeneration_time": 300.0,
+	"properties": {
+	  "transformation": 1.0,
+	  "growth": 0.6
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_chamomile",
-    "name": "Chamomile",
-    "description": "Daisy-like flowers with healing and soothing properties.",
-    "category": "common_plants",
-    "base_value": 3,
-    "rarity": 1,
-    "regeneration_time": 240.0,
-    "properties": {
-      "healing": 1.0,
-      "soothing": 0.8
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_chamomile",
+	"name": "Chamomile",
+	"description": "Daisy-like flowers with healing and soothing properties.",
+	"category": "common_plants",
+	"base_value": 3,
+	"rarity": 1,
+	"regeneration_time": 240.0,
+	"properties": {
+	  "healing": 1.0,
+	  "soothing": 0.8
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_quartz_dust",
-    "name": "Quartz Dust",
-    "description": "Powdered crystal with focus-enhancing properties.",
-    "category": "mineral_elements",
-    "base_value": 5,
-    "rarity": 2,
-    "regeneration_time": 420.0,
-    "properties": {
-      "focus": 1.0,
-      "clarity": 0.5
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_quartz_dust",
+	"name": "Quartz Dust",
+	"description": "Powdered crystal with focus-enhancing properties.",
+	"category": "mineral_elements",
+	"base_value": 5,
+	"rarity": 2,
+	"regeneration_time": 420.0,
+	"properties": {
+	  "focus": 1.0,
+	  "clarity": 0.5
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_iron_filings",
-    "name": "Iron Filings",
-    "description": "Tiny pieces of iron with strengthening properties.",
-    "category": "mineral_elements",
-    "base_value": 6,
-    "rarity": 2,
-    "regeneration_time": 600.0,
-    "properties": {
-      "strength": 1.0,
-      "durability": 0.7
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_iron_filings",
+	"name": "Iron Filings",
+	"description": "Tiny pieces of iron with strengthening properties.",
+	"category": "mineral_elements",
+	"base_value": 6,
+	"rarity": 2,
+	"regeneration_time": 600.0,
+	"properties": {
+	  "strength": 1.0,
+	  "durability": 0.7
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_clay",
-    "name": "Clay",
-    "description": "Malleable earth with stabilizing properties.",
-    "category": "mineral_elements",
-    "base_value": 3,
-    "rarity": 1,
-    "regeneration_time": 300.0,
-    "properties": {
-      "stability": 1.0,
-      "binding": 0.6
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_clay",
+	"name": "Clay",
+	"description": "Malleable earth with stabilizing properties.",
+	"category": "mineral_elements",
+	"base_value": 3,
+	"rarity": 1,
+	"regeneration_time": 300.0,
+	"properties": {
+	  "stability": 1.0,
+	  "binding": 0.6
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_salt",
-    "name": "Salt",
-    "description": "Crystalline mineral with preservation properties.",
-    "category": "mineral_elements",
-    "base_value": 4,
-    "rarity": 1,
-    "regeneration_time": 480.0,
-    "properties": {
-      "preservation": 1.0,
-      "purifying": 0.8
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_salt",
+	"name": "Salt",
+	"description": "Crystalline mineral with preservation properties.",
+	"category": "mineral_elements",
+	"base_value": 4,
+	"rarity": 1,
+	"regeneration_time": 480.0,
+	"properties": {
+	  "preservation": 1.0,
+	  "purifying": 0.8
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_sulfur",
-    "name": "Sulfur",
-    "description": "Yellow mineral with reactive properties.",
-    "category": "mineral_elements",
-    "base_value": 7,
-    "rarity": 3,
-    "regeneration_time": 900.0,
-    "properties": {
-      "reaction": 1.0,
-      "transformation": 0.5
-    },
-    "gathering_requirements": [],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_sulfur",
+	"name": "Sulfur",
+	"description": "Yellow mineral with reactive properties.",
+	"category": "mineral_elements",
+	"base_value": 7,
+	"rarity": 3,
+	"regeneration_time": 900.0,
+	"properties": {
+	  "reaction": 1.0,
+	  "transformation": 0.5
+	},
+	"gathering_requirements": [],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_morning_dew",
-    "name": "Morning Dew",
-    "description": "Water collected at dawn with rejuvenating properties.",
-    "category": "special_elements",
-    "base_value": 10,
-    "rarity": 3,
-    "regeneration_time": 1440.0,
-    "properties": {
-      "rejuvenation": 1.0,
-      "purity": 0.9
-    },
-    "gathering_requirements": ["dawn_only"],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_morning_dew",
+	"name": "Morning Dew",
+	"description": "Water collected at dawn with rejuvenating properties.",
+	"category": "special_elements",
+	"base_value": 10,
+	"rarity": 3,
+	"regeneration_time": 1440.0,
+	"properties": {
+	  "rejuvenation": 1.0,
+	  "purity": 0.9
+	},
+	"gathering_requirements": ["dawn_only"],
+	"seasonal": false,
+	"season": ""
   },
   {
-    "id": "ing_pure_water",
-    "name": "Pure Water",
-    "description": "Water filtered through special alchemical processes.",
-    "category": "special_elements",
-    "base_value": 8,
-    "rarity": 2,
-    "regeneration_time": 600.0,
-    "properties": {
-      "purity": 1.0,
-      "healing": 0.5
-    },
-    "gathering_requirements": ["special_tool"],
-    "seasonal": false,
-    "season": ""
+	"id": "ing_pure_water",
+	"name": "Pure Water",
+	"description": "Water filtered through special alchemical processes.",
+	"category": "special_elements",
+	"base_value": 8,
+	"rarity": 2,
+	"regeneration_time": 600.0,
+	"properties": {
+	  "purity": 1.0,
+	  "healing": 0.5
+	},
+	"gathering_requirements": ["special_tool"],
+	"seasonal": false,
+	"season": ""
   }
 ]

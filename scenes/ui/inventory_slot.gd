@@ -5,14 +5,14 @@ extends TextureRect
 signal quantity_changed(new_quantity)
 
 # Exported variables
-export(String) var item_id = ""
-export(int) var quantity = 0
-export(float) var quality = 1.0
+@export var item_id: String = ""
+@export var quantity: int = 0
+@export var quality: float = 1.0
 
 # Onready variables
-onready var _quantity_label = $QuantityLabel
-onready var _quality_indicator = $QualityIndicator
-onready var _selection_highlight = $SelectionHighlight
+@onready var _quantity_label = $QuantityLabel
+@onready var _quality_indicator = $QualityIndicator
+@onready var _selection_highlight = $SelectionHighlight
 
 # Lifecycle methods
 func _ready():
@@ -59,7 +59,7 @@ func set_selected(is_selected):
 
 func get_drag_data(_position):
 	"""Returns drag data for drag and drop operations"""
-	if item_id.empty() or quantity <= 0:
+	if item_id.is_empty() or quantity <= 0:
 		return null
 	
 	# Create drag preview

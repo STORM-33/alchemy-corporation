@@ -1,100 +1,175 @@
-[gd_scene load_steps=2 format=3 uid="uid://o5ersrlm325s"]
+[gd_scene load_steps=3 format=3 uid="uid://o5ersrlm325s"]
 
 [ext_resource type="Script" uid="uid://pl1k2xqks1kb" path="res://scenes/ui/hud.gd" id="1_0mwgc"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_abcde"]
 
 [node name="HUD" type="Control"]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme = ExtResource("2_abcde")
 script = ExtResource("1_0mwgc")
 
 [node name="TopBar" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 80.0
+grow_horizontal = 2
 
 [node name="Resources" type="HBoxContainer" parent="TopBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_right = 300.0
+grow_vertical = 2
+alignment = 1
 
-[node name="GoldPanel" type="Panel" parent="TopBar/Resources"]
+[node name="GoldPanel" type="PanelContainer" parent="TopBar/Resources"]
 layout_mode = 2
+size_flags_horizontal = 3
 
-[node name="GoldIcon" type="TextureRect" parent="TopBar/Resources/GoldPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="GoldLabel" type="Label" parent="TopBar/Resources/GoldPanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-
-[node name="EssencePanel" type="Panel" parent="TopBar/Resources"]
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/Resources/GoldPanel"]
 layout_mode = 2
+alignment = 1
 
-[node name="EssenceIcon" type="TextureRect" parent="TopBar/Resources/EssencePanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="EssenceLabel" type="Label" parent="TopBar/Resources/EssencePanel"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
-
-[node name="PLayerInfo" type="HBoxContainer" parent="TopBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="PlayerIcon" type="TextureRect" parent="TopBar/PLayerInfo"]
+[node name="GoldIcon" type="TextureRect" parent="TopBar/Resources/GoldPanel/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
 layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
 
-[node name="LevelLabel" type="Label" parent="TopBar/PLayerInfo"]
+[node name="GoldLabel" type="Label" parent="TopBar/Resources/GoldPanel/HBoxContainer"]
 layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EssencePanel" type="PanelContainer" parent="TopBar/Resources"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="TopBar/Resources/EssencePanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="EssenceIcon" type="TextureRect" parent="TopBar/Resources/EssencePanel/HBoxContainer"]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_vertical = 4
+expand_mode = 1
+stretch_mode = 5
+
+[node name="EssenceLabel" type="Label" parent="TopBar/Resources/EssencePanel/HBoxContainer"]
+layout_mode = 2
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PlayerInfo" type="HBoxContainer" parent="TopBar"]
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 2
+alignment = 1
+
+[node name="PlayerIcon" type="TextureRect" parent="TopBar/PlayerInfo"]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LevelLabel" type="Label" parent="TopBar/PlayerInfo"]
+layout_mode = 2
+text = "Level 1"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="BottomBar" type="Panel" parent="."]
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -80.0
+grow_horizontal = 2
+grow_vertical = 0
 
-[node name="InventoryButton" type="TextureButton" parent="BottomBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="InventoryButton" type="Button" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 16.0
+offset_top = -20.0
+offset_right = 116.0
+offset_bottom = 20.0
+grow_vertical = 2
+text = "Inventory"
 
-[node name="RecipeButton" type="TextureButton" parent="BottomBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="RecipeButton" type="Button" parent="BottomBar"]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 132.0
+offset_top = -20.0
+offset_right = 232.0
+offset_bottom = 20.0
+grow_vertical = 2
+text = "Recipes"
 
 [node name="NavButtons" type="HBoxContainer" parent="BottomBar"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -25.0
+offset_right = 200.0
+offset_bottom = 25.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
 
-[node name="WorkshopButton" type="TextureButton" parent="BottomBar/NavButtons"]
+[node name="WorkshopButton" type="Button" parent="BottomBar/NavButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Workshop"
 
-[node name="GardenButton" type="TextureButton" parent="BottomBar/NavButtons"]
+[node name="GardenButton" type="Button" parent="BottomBar/NavButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Garden"
 
-[node name="ForestButton" type="TextureButton" parent="BottomBar/NavButtons"]
+[node name="ForestButton" type="Button" parent="BottomBar/NavButtons"]
 layout_mode = 2
+size_flags_horizontal = 3
+text = "Forest"
 
 [node name="NotificationArea" type="VBoxContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="InventoryPanel" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="RecipeBookPanel" type="Panel" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -200.0
+offset_top = 100.0
+offset_right = 200.0
+offset_bottom = 300.0
+grow_horizontal = 2
+alignment = 2

@@ -1,30 +1,118 @@
-[gd_scene load_steps=2 format=3 uid="uid://dphem05u2d156"]
+[gd_scene load_steps=6 format=3 uid="uid://dphem05u2d156"]
 
 [ext_resource type="Script" uid="uid://bf2qn2vyki1w" path="res://scenes/workshop/cauldron.gd" id="1_l16ud"]
+[ext_resource type="Texture2D" uid="uid://pav8y3r7jrq4" path="res://assets/images/workshop/cauldron_base.png" id="2_ujkl5"]
+[ext_resource type="Texture2D" uid="uid://cmncx6dmbp1ty" path="res://assets/images/workshop/cauldron_liquid.png" id="3_vwxyz"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="4_abcde"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jklm1"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(40, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 10.0
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+gravity = Vector3(0, -50, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 2.0
+scale_max = 4.0
+color = Color(0.5, 0.9, 0.7, 0.7)
+hue_variation_min = -0.1
+hue_variation_max = 0.1
 
 [node name="Cauldron" type="Node2D"]
 script = ExtResource("1_l16ud")
 
 [node name="CauldronBase" type="Sprite2D" parent="."]
+position = Vector2(586, 376)
+scale = Vector2(0.685556, 0.602222)
+texture = ExtResource("2_ujkl5")
 
-[node name="BrewingParticles" type="CPUParticles2D" parent="."]
+[node name="LiquidDisplay" type="Sprite2D" parent="."]
+position = Vector2(590, 236)
+texture = ExtResource("3_vwxyz")
+
+[node name="BrewingParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 177)
+emitting = false
+amount = 24
+lifetime = 2.0
+preprocess = 0.5
+process_material = SubResource("ParticleProcessMaterial_jklm1")
 
 [node name="BrewingTimer" type="Timer" parent="."]
+one_shot = true
 
-[node name="IngredientSlots" type="Node2D" parent="."]
+[node name="IngredientSlots" type="HBoxContainer" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 108.0
+offset_right = 272.0
+offset_bottom = 158.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_abcde")
+alignment = 1
 
 [node name="Slot1" type="TextureRect" parent="IngredientSlots"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Slot2" type="TextureRect" parent="IngredientSlots"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Slot3" type="TextureRect" parent="IngredientSlots"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Slot4" type="TextureRect" parent="IngredientSlots"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="BrewButton" type="Button" parent="."]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = 541.0
+offset_top = 545.0
+offset_right = 641.0
+offset_bottom = 576.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_abcde")
+text = "Brew"
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -100.0
+offset_top = -60.0
+offset_right = 100.0
+offset_bottom = -50.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("4_abcde")
+max_value = 1.0
+value = 0.5
+show_percentage = false

@@ -1,0 +1,240 @@
+[gd_scene load_steps=3 format=3 uid="uid://difapooqw7cik"]
+
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="1_abcde"]
+[ext_resource type="Script" uid="uid://bj8wmrlwovv5t" path="res://scenes/ui/recipe_book.gd" id="2_abcde"]
+
+[node name="RecipeBookPanel" type="Panel"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -200.0
+offset_right = 300.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_abcde")
+script = ExtResource("2_abcde")
+
+[node name="HeaderLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -150.0
+offset_top = 10.0
+offset_right = 150.0
+offset_bottom = 50.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 20
+text = "Recipe Book"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CloseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 40.0
+grow_horizontal = 0
+text = "X"
+
+[node name="TabContainer" type="TabContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 50.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+current_tab = 0
+
+[node name="All Recipes" type="VBoxContainer" parent="TabContainer"]
+layout_mode = 2
+metadata/_tab_index = 0
+
+[node name="SearchBar" type="LineEdit" parent="TabContainer/All Recipes"]
+layout_mode = 2
+placeholder_text = "Search recipes..."
+clear_button_enabled = true
+
+[node name="RecipesList" type="ScrollContainer" parent="TabContainer/All Recipes"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/All Recipes/RecipesList"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Healing" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
+[node name="SearchBar" type="LineEdit" parent="TabContainer/Healing"]
+layout_mode = 2
+placeholder_text = "Search healing recipes..."
+clear_button_enabled = true
+
+[node name="RecipesList" type="ScrollContainer" parent="TabContainer/Healing"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Healing/RecipesList"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Utility" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
+
+[node name="SearchBar" type="LineEdit" parent="TabContainer/Utility"]
+layout_mode = 2
+placeholder_text = "Search utility recipes..."
+clear_button_enabled = true
+
+[node name="RecipesList" type="ScrollContainer" parent="TabContainer/Utility"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Utility/RecipesList"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Transformation" type="VBoxContainer" parent="TabContainer"]
+visible = false
+layout_mode = 2
+metadata/_tab_index = 3
+
+[node name="SearchBar" type="LineEdit" parent="TabContainer/Transformation"]
+layout_mode = 2
+placeholder_text = "Search transformation recipes..."
+clear_button_enabled = true
+
+[node name="RecipesList" type="ScrollContainer" parent="TabContainer/Transformation"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="TabContainer/Transformation/RecipesList"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DetailPanel" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 6
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -150.0
+offset_right = 250.0
+offset_bottom = 150.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="RecipeTitle" type="Label" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -100.0
+offset_top = 10.0
+offset_right = 100.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 18
+text = "Recipe Name"
+horizontal_alignment = 1
+
+[node name="ResultIcon" type="TextureRect" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -40.0
+offset_top = 50.0
+offset_right = 40.0
+offset_bottom = 130.0
+grow_horizontal = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Description" type="Label" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -110.0
+offset_top = -10.0
+offset_right = 110.0
+offset_bottom = 40.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Recipe description goes here."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[node name="IngredientsLabel" type="Label" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = 50.0
+offset_right = 90.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Required Ingredients:"
+horizontal_alignment = 1
+
+[node name="IngredientsList" type="VBoxContainer" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -90.0
+offset_top = 70.0
+offset_right = 90.0
+offset_bottom = 130.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="BrewButton" type="Button" parent="DetailPanel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -60.0
+offset_top = -50.0
+offset_right = 60.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+text = "Brew This"

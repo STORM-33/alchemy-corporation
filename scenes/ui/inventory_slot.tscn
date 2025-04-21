@@ -1,23 +1,73 @@
-[gd_scene load_steps=2 format=3 uid="uid://dasw33trws3s1"]
+[gd_scene load_steps=4 format=3 uid="uid://dasw33trws3s1"]
 
 [ext_resource type="Script" uid="uid://diqrxycl55f2m" path="res://scenes/ui/inventory_slot.gd" id="1_kscix"]
+[ext_resource type="Texture2D" uid="uid://bydgaml5budhn" path="res://assets/images/ui/inventory_slot_bg.png" id="2_abcde"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q6p3j"]
+bg_color = Color(0.227451, 0.584314, 0.270588, 0.5)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.4, 0.8, 0.4, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
 
 [node name="InventorySlot" type="TextureRect"]
-offset_right = 40.0
-offset_bottom = 40.0
+custom_minimum_size = Vector2(80, 80)
+offset_right = 80.0
+offset_bottom = 80.0
+texture = ExtResource("2_abcde")
+expand_mode = 1
+stretch_mode = 5
 script = ExtResource("1_kscix")
 
-[node name="QualityLabel" type="Label" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 23.0
+[node name="QuantityLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -24.0
+offset_top = -26.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_constants/shadow_outline_size = 1
+theme_override_font_sizes/font_size = 14
+text = "1"
+horizontal_alignment = 2
+vertical_alignment = 2
 
 [node name="QualityIndicator" type="TextureProgressBar" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -6.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 0
+max_value = 200.0
+value = 100.0
+nine_patch_stretch = true
+tint_progress = Color(0.396078, 0.65098, 0.247059, 1)
 
-[node name="SelectionHighlight" type="ColorRect" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="SelectionHighlight" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_q6p3j")

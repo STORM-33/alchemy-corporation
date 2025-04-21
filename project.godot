@@ -17,7 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-GameManager="*res://scripts/autoload/game-manager.gd"
-IngredientManager="*res://scripts/autoload/ingredient-manager.gd"
-InventoryManager="*res://scripts/autoload/inventory-manager.gd"
-GatheringSystem="*res://scripts/autoload/gathering-system.gd"
+GameManager="*res://scripts/autoload/game_manager.gd"
+IngredientManager="*res://scripts/autoload/ingredient_manager.gd"
+InventoryManager="*res://scripts/autoload/inventory_manager.gd"
+GatheringSystem="*res://scripts/autoload/gathering_system.gd"
+NotificationSystem="*res://scripts/systems/notification_system.gd"
