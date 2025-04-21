@@ -23,7 +23,7 @@ func _ready():
 # Input handling
 func _input(event):
 	# Toggle debug panel with F1
-	if event is InputEventKey and event.pressed and event.scancode == KEY_F1:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_F1:
 		_debug_panel.visible = !_debug_panel.visible
 
 # Debug functions

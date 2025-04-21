@@ -134,7 +134,7 @@ func _update_all_displays():
 
 func _process_notifications():
 	"""Processes and displays notifications"""
-	if _notifications.isEmpty():
+	if _notifications.is_empty():
 		return
 	
 	# Process each notification

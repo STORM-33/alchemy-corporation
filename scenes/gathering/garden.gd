@@ -26,7 +26,7 @@ var _area_id = "garden"
 
 # Lifecycle methods
 func _ready():
-	emit_signal("area_entered")
+	area_entered.emit()
 	
 	# Initialize with the gathering system
 	var gathering_system = get_node_or_null("/root/GatheringSystem")
@@ -81,7 +81,7 @@ func _initialize_with_gathering_system(gathering_system):
 	)
 	
 	# Connect signals to be notified when resources are spawned
-	gathering_system.connect("resource_spawned", self, "_on_resource_spawned")
+	gathering_system.resource_spawned.connect(_on_resource_spawned)
 	
 	_area_initialized = true
 
@@ -119,4 +119,4 @@ func _on_resource_clicked(node_id):
 	if gathering_system:
 		var result = gathering_system.gather_resource(node_id)
 		if result.success:
-			emit_signal("resource_clicked", result.resource_id, node_id)
+			resource_clicked.emit(result.resource_id, node_id)

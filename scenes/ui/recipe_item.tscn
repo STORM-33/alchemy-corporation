@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://c5r3vx2q6yg7n"]
+[gd_scene load_steps=3 format=3 uid="uid://bakt6wufreqm3"]
 
-[ext_resource type="Script" path="res://scenes/ui/recipe_item.gd" id="1_bkj0p"]
+[ext_resource type="Script" uid="uid://duh22quunhuy8" path="res://scenes/ui/recipe_item.gd" id="1_bkj0p"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="2_d0vgs"]
 
 [node name="RecipeItem" type="Button"]

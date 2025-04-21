@@ -137,7 +137,7 @@ func _clear_inventory_grids():
 
 func _add_item_to_grid(item_id, quantity, quality):
 	"""Adds an item to the appropriate grid"""
-	var slot = INVENTORY_SLOT_SCENE.instance()
+	var slot = INVENTORY_SLOT_SCENE.instantiate()
 	
 	# Configure slot
 	slot.setup(item_id, quantity, quality)

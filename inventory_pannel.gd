@@ -8,21 +8,21 @@ signal item_drag_started(item_id)
 signal closed
 
 # Onready variables
-onready var _header_label = $HeaderLabel
-onready var _close_button = $CloseButton
-onready var _tab_container = $TabContainer
-onready var _ingredients_grid = $TabContainer/Ingredients/ItemGrid
-onready var _potions_grid = $TabContainer/Potions/ItemGrid
-onready var _item_info_panel = $ItemInfoPanel
-onready var _item_icon = $ItemInfoPanel/ItemIcon
-onready var _item_name = $ItemInfoPanel/ItemName
-onready var _item_description = $ItemInfoPanel/ItemDescription
-onready var _item_properties = $ItemInfoPanel/ItemProperties
-onready var _use_button = $ItemInfoPanel/ActionButtons/UseButton
-onready var _drop_button = $ItemInfoPanel/ActionButtons/DropButton
+@onready var _header_label = $HeaderLabel
+@onready var _close_button = $CloseButton
+@onready var _tab_container = $TabContainer
+@onready var _ingredients_grid = $TabContainer/Ingredients/ItemGrid
+@onready var _potions_grid = $TabContainer/Potions/ItemGrid
+@onready var _item_info_panel = $ItemInfoPanel
+@onready var _item_icon = $ItemInfoPanel/ItemIcon
+@onready var _item_name = $ItemInfoPanel/ItemName
+@onready var _item_description = $ItemInfoPanel/ItemDescription
+@onready var _item_properties = $ItemInfoPanel/ItemProperties
+@onready var _use_button = $ItemInfoPanel/ActionButtons/UseButton
+@onready var _drop_button = $ItemInfoPanel/ActionButtons/DropButton
 
 # Scene references
-const INVENTORY_SLOT_SCENE = preload("res://scenes/ui/inventory_slot.tscn")
+var INVENTORY_SLOT_SCENE = preload("res://scenes/ui/inventory_slot.tscn")
 
 # Private variables
 var _selected_item_id = ""
@@ -33,12 +33,12 @@ var _inventory_slots = {}  # Maps item_id to slot node
 # Lifecycle methods
 func _ready():
 	# Connect signals
-	_close_button.connect("pressed", self, "_on_close_button_pressed")
-	_use_button.connect("pressed", self, "_on_use_button_pressed")
-	_drop_button.connect("pressed", self, "_on_drop_button_pressed")
+	_close_button.pressed.connect(_on_close_button_pressed)
+	_use_button.pressed.connect(_on_use_button_pressed)
+	_drop_button.pressed.connect(_on_drop_button_pressed)
 	
 	# Tab signals
-	_tab_container.connect("tab_changed", self, "_on_tab_changed")
+	_tab_container.tab_changed.connect(_on_tab_changed)
 	
 	# Hide item info by default
 	_item_info_panel.visible = false
@@ -46,9 +46,9 @@ func _ready():
 	# Connect to inventory manager signals
 	var inventory_manager = get_node_or_null("/root/InventoryManager")
 	if inventory_manager:
-		inventory_manager.connect("inventory_updated", self, "_on_inventory_updated")
-		inventory_manager.connect("item_added", self, "_on_item_added")
-		inventory_manager.connect("item_removed", self, "_on_item_removed")
+		inventory_manager.inventory_updated.connect(_on_inventory_updated)
+		inventory_manager.item_added.connect(_on_item_added)
+		inventory_manager.item_removed.connect(_on_item_removed)
 	
 	# Initial refresh
 	refresh_inventory()
@@ -62,7 +62,7 @@ func show_panel():
 func hide_panel():
 	"""Hides the inventory panel"""
 	visible = false
-	emit_signal("closed")
+	closed.emit()
 
 func refresh_inventory():
 	"""Refreshes the entire inventory display"""
@@ -108,7 +108,7 @@ func select_item(item_id):
 	# Show item details
 	_show_item_details(item_id)
 	
-	emit_signal("item_selected", item_id)
+	item_selected.emit(item_id)
 
 func deselect_item():
 	"""Deselects the current item"""
@@ -137,12 +137,12 @@ func _clear_inventory_grids():
 
 func _add_item_to_grid(item_id, quantity, quality):
 	"""Adds an item to the appropriate grid"""
-	var slot = INVENTORY_SLOT_SCENE.instance()
+	var slot = INVENTORY_SLOT_SCENE.instantiate()
 	
 	# Configure slot
 	slot.setup(item_id, quantity, quality)
-	slot.connect("pressed", self, "_on_inventory_slot_pressed", [item_id])
-	slot.connect("gui_input", self, "_on_inventory_slot_input", [item_id])
+	slot.pressed.connect(_on_inventory_slot_pressed.bind(item_id))
+	slot.gui_input.connect(_on_inventory_slot_input.bind(item_id))
 	
 	# Store reference to slot
 	_inventory_slots[item_id] = slot
@@ -227,7 +227,7 @@ func _on_inventory_slot_pressed(item_id):
 func _on_inventory_slot_input(event, item_id):
 	"""Handles advanced input on inventory slots"""
 	if event is InputEventMouseButton:
-		if event.pressed and event.button_index == BUTTON_RIGHT:
+		if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
 			# Right click - context menu or quick use
 			if item_id.begins_with("pot_"):
 				_use_item(item_id)
@@ -258,7 +258,7 @@ func _on_drop_button_pressed():
 
 func _use_item(item_id):
 	"""Uses the given item"""
-	emit_signal("item_used", item_id)
+	item_used.emit(item_id)
 	
 	# For ingredients, this would be handled by the brewing system
 	# For potions, apply effects immediately
