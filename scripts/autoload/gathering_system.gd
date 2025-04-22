@@ -26,9 +26,7 @@ var _gathering_luck = 1.0
 
 # Lifecycle methods
 func _ready():
-	# Register with GameManager
-	if has_node("/root/GameManager"):
-		get_node("/root/GameManager").gathering_system = self
+	pass
 
 # Public methods
 func initialize_gathering_area(area_id, spawn_positions, initial_resources=[]):
