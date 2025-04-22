@@ -1,0 +1,133 @@
+[gd_scene load_steps=5 format=3 uid="uid://b6hldj1oiw0oy"]
+
+[ext_resource type="Script" path="res://scenes/gathering/forest_edge.gd" id="1_4w26p"]
+[ext_resource type="PackedScene" uid="uid://b0wgm1a4mje6p" path="res://scenes/gathering/resource_node.tscn" id="2_r5txg"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_lpnfe"]
+resource_name = "forest_background"
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qvw7b"]
+bg_color = Color(0.14902, 0.231373, 0.211765, 0.768627)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.203922, 0.309804, 0.27451, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[node name="ForestEdge" type="Node2D"]
+script = ExtResource("1_4w26p")
+available_resources = ["ing_mushrooms", "ing_clay", "ing_quartz_dust", "ing_iron_filings", "ing_sulfur"]
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(577.5, 323)
+scale = Vector2(1.44375, 1.42667)
+texture = SubResource("CompressedTexture2D_lpnfe")
+
+[node name="SpawnPoints" type="Node2D" parent="."]
+
+[node name="SpawnPoint1" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(122, 312)
+
+[node name="SpawnPoint2" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(256, 437)
+
+[node name="SpawnPoint3" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(412, 518)
+
+[node name="SpawnPoint4" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(582, 430)
+
+[node name="SpawnPoint5" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(768, 517)
+
+[node name="SpawnPoint6" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(927, 401)
+
+[node name="SpawnPoint7" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(762, 289)
+
+[node name="SpawnPoint8" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(598, 217)
+
+[node name="SpawnPoint9" type="Marker2D" parent="SpawnPoints"]
+position = Vector2(362, 216)
+
+[node name="ResourceNodes" type="Node2D" parent="."]
+
+[node name="ResourceNode" parent="ResourceNodes" instance=ExtResource("2_r5txg")]
+visible = false
+position = Vector2(300, 200)
+
+[node name="Decorations" type="Node2D" parent="."]
+
+[node name="Tree1" type="Sprite2D" parent="Decorations"]
+position = Vector2(105, 159)
+
+[node name="Tree2" type="Sprite2D" parent="Decorations"]
+position = Vector2(348, 127)
+
+[node name="Tree3" type="Sprite2D" parent="Decorations"]
+position = Vector2(629, 139)
+
+[node name="Tree4" type="Sprite2D" parent="Decorations"]
+position = Vector2(859, 170)
+
+[node name="Bush1" type="Sprite2D" parent="Decorations"]
+position = Vector2(207, 356)
+
+[node name="Bush2" type="Sprite2D" parent="Decorations"]
+position = Vector2(469, 329)
+
+[node name="Bush3" type="Sprite2D" parent="Decorations"]
+position = Vector2(686, 372)
+
+[node name="Rock1" type="Sprite2D" parent="Decorations"]
+position = Vector2(142, 486)
+
+[node name="Rock2" type="Sprite2D" parent="Decorations"]
+position = Vector2(501, 478)
+
+[node name="Rock3" type="Sprite2D" parent="Decorations"]
+position = Vector2(849, 505)
+
+[node name="ReturnButton" type="Button" parent="."]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 120.0
+offset_bottom = 51.0
+text = "Return"
+
+[node name="InfoLabel" type="Label" parent="."]
+offset_left = 400.0
+offset_top = 20.0
+offset_right = 752.0
+offset_bottom = 46.0
+text = "Collect minerals and special ingredients"
+horizontal_alignment = 1
+
+[node name="AreaTip" type="Panel" parent="."]
+offset_left = 812.0
+offset_top = 58.0
+offset_right = 1012.0
+offset_bottom = 118.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qvw7b")
+
+[node name="Label" type="Label" parent="AreaTip"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Minerals and rare fungi can be found hidden among the rocks and trees."
+autowrap_mode = 3
+
+[connection signal="pressed" from="ReturnButton" to="." method="_on_return_button_pressed"]

@@ -1,8 +1,13 @@
 extends TextureRect
-## Represents a single inventory slot
+## Represents a single inventory slot with drag-and-drop support
+## This is an updated version of your existing inventory_slot.gd
 
 # Signals
 signal quantity_changed(new_quantity)
+signal item_drag_started(item_id)
+signal item_drag_ended(success)
+signal slot_clicked(item_id)
+signal slot_right_clicked(item_id)
 
 # Exported variables
 @export var item_id: String = ""
@@ -71,12 +76,38 @@ func get_drag_data(_position):
 	# Set drag preview
 	set_drag_preview(preview)
 	
+	# Signal that dragging started
+	item_drag_started.emit(item_id)
+	
 	# Return data
 	return {
 		"type": "inventory_item",
 		"item_id": item_id,
 		"source": self
 	}
+
+func can_drop_data(_position, data):
+	"""Determines if this slot can accept the dropped data"""
+	# For now, we don't allow dropping on inventory slots
+	# Could be implemented later for item swapping or merging
+	return false
+
+func drop_data(_position, data):
+	"""Handles dropping data on this slot"""
+	# Not implemented yet
+	pass
+
+# GUI input for direct clicking
+func _gui_input(event):
+	if event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			# Left click
+			if not item_id.is_empty():
+				slot_clicked.emit(item_id)
+		elif event.button_index == MOUSE_BUTTON_RIGHT:
+			# Right click
+			if not item_id.is_empty():
+				slot_right_clicked.emit(item_id)
 
 # Private methods
 func _update_display():

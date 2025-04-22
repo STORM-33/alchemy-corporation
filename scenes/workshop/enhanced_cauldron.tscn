@@ -1,0 +1,395 @@
+[gd_scene load_steps=16 format=3 uid="uid://7jejso1uk64f"]
+
+[ext_resource type="Script" uid="uid://cvwattkegmccb" path="res://scenes/workshop/enhanced_cauldron.gd" id="1_qn3g0"]
+[ext_resource type="Texture2D" uid="uid://pav8y3r7jrq4" path="res://assets/images/workshop/cauldron_base.png" id="2_ujkl5"]
+[ext_resource type="Texture2D" uid="uid://cmncx6dmbp1ty" path="res://assets/images/workshop/cauldron_liquid.png" id="3_vwxyz"]
+[ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="4_abcde"]
+
+[sub_resource type="Shader" id="Shader_riple"]
+code = "shader_type canvas_item;
+
+uniform float ripple_speed = 1.0;
+uniform float ripple_strength = 0.1;
+uniform float displacement_amount = 0.01;
+uniform float time_scale = 1.0;
+
+void fragment() {
+    // Time variable for animation
+    float time = TIME * time_scale;
+    
+    // Create ripple effect
+    vec2 uv = UV;
+    float ripple = sin(uv.x * 10.0 + time * ripple_speed) * cos(uv.y * 10.0 + time * ripple_speed) * ripple_strength;
+    
+    // Displace UVs
+    vec2 displaced_uv = uv + vec2(sin(time + uv.y * 5.0), cos(time + uv.x * 5.0)) * displacement_amount;
+    
+    // Apply ripple effect to color
+    COLOR = texture(TEXTURE, displaced_uv);
+    
+    // Add slight wobble to alpha for bubbling effect
+    COLOR.a = texture(TEXTURE, uv).a * (1.0 + ripple * 0.05);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uj9gl"]
+shader = SubResource("Shader_riple")
+shader_parameter/ripple_speed = 1.0
+shader_parameter/ripple_strength = 0.1
+shader_parameter/displacement_amount = 0.01
+shader_parameter/time_scale = 1.0
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_jklm1"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(40, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 10.0
+initial_velocity_min = 20.0
+initial_velocity_max = 40.0
+gravity = Vector3(0, -50, 0)
+damping_min = 10.0
+damping_max = 20.0
+scale_min = 2.0
+scale_max = 4.0
+color = Color(0.5, 0.9, 0.7, 0.7)
+hue_variation_min = -0.1
+hue_variation_max = 0.1
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u8q23"]
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(30, 1, 1)
+direction = Vector3(0, -1, 0)
+spread = 20.0
+initial_velocity_min = 10.0
+initial_velocity_max = 30.0
+gravity = Vector3(0, -20, 0)
+scale_max = 3.0
+color = Color(0.9, 0.9, 0.9, 0.4)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_f8xvb"]
+particle_flag_disable_z = true
+direction = Vector3(0, -1, 0)
+spread = 180.0
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+gravity = Vector3(0, 98, 0)
+scale_min = 2.0
+scale_max = 5.0
+color = Color(0.5, 0.8, 0.9, 0.8)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h45gq"]
+bg_color = Color(0.145098, 0.168627, 0.203922, 0.882353)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.305882, 0.545098, 0.666667, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h15gq"]
+bg_color = Color(0.164706, 0.196078, 0.235294, 0.882353)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.411765, 0.623529, 0.709804, 1)
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+
+[sub_resource type="Animation" id="Animation_wb4bm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_q2t3p"]
+resource_name = "bubble_effect"
+length = 1.5
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:material:shader_parameter/ripple_strength")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.7, 1.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.1, 0.15, 0.1]
+}
+
+[sub_resource type="Animation" id="Animation_klt2p"]
+resource_name = "liquid_glow"
+length = 3.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1.1, 1.1, 1.1, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hd87a"]
+_data = {
+&"RESET": SubResource("Animation_wb4bm"),
+&"bubble_effect": SubResource("Animation_q2t3p"),
+&"liquid_glow": SubResource("Animation_klt2p")
+}
+
+[node name="EnhancedCauldron" type="Node2D"]
+script = ExtResource("1_qn3g0")
+
+[node name="CauldronBase" type="Sprite2D" parent="."]
+position = Vector2(603, 356)
+scale = Vector2(0.545, 0.408889)
+texture = ExtResource("2_ujkl5")
+
+[node name="LiquidDisplay" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_uj9gl")
+position = Vector2(596, 258)
+scale = Vector2(1.33594, 0.304688)
+texture = ExtResource("3_vwxyz")
+
+[node name="BubbleParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 177)
+amount = 24
+lifetime = 2.0
+preprocess = 0.5
+process_material = SubResource("ParticleProcessMaterial_jklm1")
+
+[node name="SteamParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 160)
+amount = 16
+lifetime = 3.0
+process_material = SubResource("ParticleProcessMaterial_u8q23")
+
+[node name="SplashParticles" type="GPUParticles2D" parent="."]
+position = Vector2(590, 200)
+emitting = false
+amount = 30
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_f8xvb")
+
+[node name="BrewingTimer" type="Timer" parent="."]
+one_shot = true
+
+[node name="StirTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[node name="AudioPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = -10.0
+
+[node name="IngredientSlots" type="HBoxContainer" parent="."]
+offset_left = 470.0
+offset_top = 310.0
+offset_right = 710.0
+offset_bottom = 360.0
+theme = ExtResource("4_abcde")
+alignment = 1
+
+[node name="Slot1" type="TextureRect" parent="IngredientSlots"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot2" type="TextureRect" parent="IngredientSlots"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot3" type="TextureRect" parent="IngredientSlots"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Slot4" type="TextureRect" parent="IngredientSlots"]
+custom_minimum_size = Vector2(50, 50)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="PropertyDisplay" type="VBoxContainer" parent="."]
+offset_left = 380.0
+offset_top = 200.0
+offset_right = 480.0
+offset_bottom = 300.0
+theme = ExtResource("4_abcde")
+
+[node name="PropertyLabel" type="Label" parent="PropertyDisplay"]
+layout_mode = 2
+text = "Properties:"
+
+[node name="StirButton" type="Button" parent="."]
+offset_left = 441.0
+offset_top = 445.0
+offset_right = 541.0
+offset_bottom = 476.0
+theme = ExtResource("4_abcde")
+text = "Stir"
+
+[node name="BrewButton" type="Button" parent="."]
+offset_left = 641.0
+offset_top = 445.0
+offset_right = 741.0
+offset_bottom = 476.0
+theme = ExtResource("4_abcde")
+text = "Brew"
+
+[node name="StirCounter" type="Label" parent="."]
+offset_left = 441.0
+offset_top = 480.0
+offset_right = 541.0
+offset_bottom = 506.0
+text = "Stirs: 0/5"
+horizontal_alignment = 1
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+offset_left = 498.0
+offset_top = 498.0
+offset_right = 698.0
+offset_bottom = 508.0
+theme = ExtResource("4_abcde")
+max_value = 1.0
+value = 0.5
+show_percentage = false
+
+[node name="RecipePanel" type="Panel" parent="."]
+offset_left = 858.0
+offset_top = 184.0
+offset_right = 1008.0
+offset_bottom = 304.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_h45gq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RecipePanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+text = "Current Recipe"
+horizontal_alignment = 1
+
+[node name="RecipeName" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Unknown Recipe"
+horizontal_alignment = 1
+
+[node name="IngredientsLabel" type="Label" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Ingredients:"
+
+[node name="IngredientsList" type="VBoxContainer" parent="RecipePanel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PropertiesPanel" type="Panel" parent="."]
+offset_left = 205.0
+offset_top = 164.0
+offset_right = 345.0
+offset_bottom = 334.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_h15gq")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PropertiesPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleLabel" type="Label" parent="PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+text = "Brewing Quality"
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="QualityContainer" type="HBoxContainer" parent="PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+
+[node name="QualityLabel" type="Label" parent="PropertiesPanel/VBoxContainer/QualityContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "Quality:"
+
+[node name="QualityValue" type="Label" parent="PropertiesPanel/VBoxContainer/QualityContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.403922, 0.792157, 0.505882, 1)
+theme_override_font_sizes/font_size = 14
+text = "1.0"
+horizontal_alignment = 2
+
+[node name="StirEffectLabel" type="Label" parent="PropertiesPanel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Stir the cauldron to improve quality!"
+autowrap_mode = 3
+
+[node name="LiquidAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_hd87a")
+}
+autoplay = "liquid_glow"
+
+[node name="LiquidHighlight" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 540.0
+offset_top = 186.0
+offset_right = 640.0
+offset_bottom = 286.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.0784314)
+
+[connection signal="pressed" from="StirButton" to="." method="_on_stir_button_pressed"]
+[connection signal="pressed" from="BrewButton" to="." method="_on_brew_button_pressed"]

@@ -1,10 +1,12 @@
 extends Panel
 ## Inventory panel for managing ingredients and potions
+## Updated to support drag-and-drop to cauldron
 
 # Signals
 signal item_selected(item_id)
 signal item_used(item_id)
 signal item_drag_started(item_id)
+signal item_dropped_on_cauldron(item_id)
 signal closed
 
 # Onready variables
@@ -29,6 +31,7 @@ var _selected_item_id = ""
 var _selected_item_type = ""  # "ingredient" or "potion"
 var _current_filter = "all"
 var _inventory_slots = {}  # Maps item_id to slot node
+var _dragging_item_id = ""
 
 # Lifecycle methods
 func _ready():
@@ -121,16 +124,17 @@ func deselect_item():
 # Private methods
 func _clear_inventory_grids():
 	"""Clears all inventory slot displays"""
-	# Store existing slots for reuse
-	var existing_ingredients = {}
-	var existing_potions = {}
-	
+	# Clear existing slots and disconnect signals
 	for child in _ingredients_grid.get_children():
-		existing_ingredients[child.item_id] = child
+		if child.has_signal("item_drag_started"):
+			if child.item_drag_started.is_connected(_on_item_drag_started):
+				child.item_drag_started.disconnect(_on_item_drag_started)
 		child.queue_free()
 	
 	for child in _potions_grid.get_children():
-		existing_potions[child.item_id] = child
+		if child.has_signal("item_drag_started"):
+			if child.item_drag_started.is_connected(_on_item_drag_started):
+				child.item_drag_started.disconnect(_on_item_drag_started)
 		child.queue_free()
 	
 	_inventory_slots.clear()
@@ -141,8 +145,11 @@ func _add_item_to_grid(item_id, quantity, quality):
 	
 	# Configure slot
 	slot.setup(item_id, quantity, quality)
-	slot.pressed.connect(_on_inventory_slot_pressed.bind(item_id))
-	slot.gui_input.connect(_on_inventory_slot_input.bind(item_id))
+	
+	# Connect signals
+	slot.slot_clicked.connect(_on_inventory_slot_pressed.bind(item_id))
+	slot.slot_right_clicked.connect(_on_inventory_slot_right_clicked.bind(item_id))
+	slot.item_drag_started.connect(_on_item_drag_started)
 	
 	# Store reference to slot
 	_inventory_slots[item_id] = slot
@@ -180,7 +187,7 @@ func _show_item_details(item_id):
 	if ResourceLoader.exists(texture_path):
 		_item_icon.texture = load(texture_path)
 	else:
-		_item_icon.texture = null
+		_item_icon.texture = load("res://assets/images/ui/icons/unknown_item.png")
 	
 	# Clear existing properties
 	for child in _item_properties.get_children():
@@ -224,17 +231,26 @@ func _on_inventory_slot_pressed(item_id):
 	"""Handles inventory slot selection"""
 	select_item(item_id)
 
-func _on_inventory_slot_input(event, item_id):
-	"""Handles advanced input on inventory slots"""
-	if event is InputEventMouseButton:
-		if event.pressed and event.button_index == MOUSE_BUTTON_RIGHT:
-			# Right click - context menu or quick use
-			if item_id.begins_with("pot_"):
-				_use_item(item_id)
-		
-		# Drag and drop logic could be added here
+func _on_inventory_slot_right_clicked(item_id):
+	"""Handles right click on inventory slots"""
+	if item_id.begins_with("ing_"):
+		# For ingredients, we could show a context menu with more options
+		# For now, let's just use it directly with the cauldron if possible
+		_attempt_to_use_ingredient_in_cauldron(item_id)
+	elif item_id.begins_with("pot_"):
+		# For potions, use it immediately
+		_use_item(item_id)
+
+func _on_item_drag_started(item_id):
+	"""Handles the start of a drag operation"""
+	_dragging_item_id = item_id
 	
-	# Double-click detection could be added here
+	# Notify GameplayManager
+	var gameplay_manager = get_node_or_null("/root/GameplayManager")
+	if gameplay_manager and gameplay_manager.has_method("start_ingredient_drag"):
+		gameplay_manager.start_ingredient_drag(item_id)
+	
+	item_drag_started.emit(item_id)
 
 func _on_use_button_pressed():
 	"""Handles use button press"""
@@ -258,11 +274,11 @@ func _on_drop_button_pressed():
 
 func _use_item(item_id):
 	"""Uses the given item"""
-	item_used.emit(item_id)
-	
-	# For ingredients, this would be handled by the brewing system
-	# For potions, apply effects immediately
-	if item_id.begins_with("pot_"):
+	if item_id.begins_with("ing_"):
+		# For ingredients, try to add to cauldron
+		_attempt_to_use_ingredient_in_cauldron(item_id)
+	elif item_id.begins_with("pot_"):
+		# For potions, apply effects immediately
 		var inventory_manager = get_node_or_null("/root/InventoryManager")
 		if inventory_manager:
 			inventory_manager.remove_item(item_id, 1)
@@ -270,6 +286,57 @@ func _use_item(item_id):
 			# If potion is completely used up, deselect
 			if not inventory_manager.has_item(item_id):
 				deselect_item()
+	
+	item_used.emit(item_id)
+
+func _attempt_to_use_ingredient_in_cauldron(ingredient_id):
+	"""Attempts to add the ingredient to the cauldron"""
+	# Find the cauldron in the scene
+	var main_scene = get_tree().current_scene
+	if not main_scene:
+		return false
+	
+	# Try different paths to find the cauldron
+	var cauldron
+	
+	# Try workshop path
+	var workshop = main_scene.get_node_or_null("Workshop")
+	if workshop:
+		cauldron = workshop.get_node_or_null("Stations/Cauldron")
+	
+	# If not found, try direct path
+	if not cauldron:
+		cauldron = main_scene.get_node_or_null("Cauldron")
+	
+	# If still not found, give up
+	if not cauldron or not cauldron.has_method("add_ingredient"):
+		var notification_system = get_node_or_null("/root/NotificationSystem")
+		if notification_system:
+			notification_system.show_warning("No cauldron found to add ingredient!")
+		return false
+	
+	# Try to add the ingredient
+	var success = cauldron.add_ingredient(ingredient_id)
+	
+	if success:
+		# Remove from inventory
+		var inventory_manager = get_node_or_null("/root/InventoryManager")
+		if inventory_manager:
+			inventory_manager.remove_item(ingredient_id, 1)
+			
+			# If item is completely gone, deselect
+			if not inventory_manager.has_item(ingredient_id):
+				deselect_item()
+		
+		# Signal successful drop
+		item_dropped_on_cauldron.emit(ingredient_id)
+		
+		return true
+	else:
+		var notification_system = get_node_or_null("/root/NotificationSystem")
+		if notification_system:
+			notification_system.show_warning("Cannot add more ingredients to cauldron!")
+		return false
 
 func _on_tab_changed(tab_index):
 	"""Handles changing between tabs"""
@@ -293,12 +360,8 @@ func _on_inventory_updated(item_id, new_quantity):
 
 func _on_item_added(item_id, quantity):
 	"""Called when an item is added to inventory"""
-	# Refresh the whole inventory for simplicity
-	# Could be optimized to just update the affected slot
 	refresh_inventory()
 
 func _on_item_removed(item_id, quantity):
 	"""Called when an item is removed from inventory"""
-	# Refresh the whole inventory for simplicity
-	# Could be optimized to just update the affected slot
 	refresh_inventory()
