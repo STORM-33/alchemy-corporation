@@ -1,14 +1,86 @@
-[gd_scene load_steps=2 format=3 uid="uid://b0wgm1a4mje6p"]
+[gd_scene load_steps=6 format=3 uid="uid://b0wgm1a4mje6p"]
 
 [ext_resource type="Script" uid="uid://c6vk522pael65" path="res://scenes/gathering/resource_node.gd" id="1_yw2bd"]
+[ext_resource type="Texture2D" uid="uid://drgv842ymh7ll" path="res://assets/images/ui/icons/unknown_item.png" id="2_8jndy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ptkhd"]
+radius = 30.0
+
+[sub_resource type="Animation" id="Animation_f6xnr"]
+resource_name = "gather"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(0.5, 2, 1),
+"update": 0,
+"values": [Vector2(1, 1), Vector2(1.2, 1.2), Vector2(0, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.3, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1, 1, 1, 1), Color(1, 1, 1, 0)]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0.5),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"_on_animation_finished"
+}]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_7ehxt"]
+_data = {
+&"gather": SubResource("Animation_f6xnr")
+}
 
 [node name="ResourceNode" type="Area2D"]
 script = ExtResource("1_yw2bd")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_8jndy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_ptkhd")
 
 [node name="GatherParticles" type="CPUParticles2D" parent="."]
+emitting = false
+amount = 16
+one_shot = true
+explosiveness = 0.8
+emission_shape = 1
+emission_sphere_radius = 20.0
+direction = Vector2(0, -1)
+spread = 90.0
+gravity = Vector2(0, 50)
+initial_velocity_min = 50.0
+initial_velocity_max = 100.0
+scale_amount_min = 2.0
+scale_amount_max = 4.0
+color = Color(0.8, 0.8, 0.8, 0.6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_7ehxt")
+}
+
+[connection signal="input_event" from="." to="." method="_on_input_event"]

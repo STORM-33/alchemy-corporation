@@ -1,5 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://dphem05u2d156"]
+[gd_scene load_steps=14 format=3 uid="uid://dphem05u2d156"]
 
+[ext_resource type="Script" uid="uid://bf2qn2vyki1w" path="res://scenes/workshop/cauldron.gd" id="1_qn3g0"]
 [ext_resource type="Texture2D" uid="uid://pav8y3r7jrq4" path="res://assets/images/workshop/cauldron_base.png" id="2_ujkl5"]
 [ext_resource type="Texture2D" uid="uid://cmncx6dmbp1ty" path="res://assets/images/workshop/cauldron_liquid.png" id="3_vwxyz"]
 [ext_resource type="Theme" uid="uid://c3h72aepjnmvj" path="res://resources/themes/main_theme.tres" id="4_abcde"]
@@ -89,7 +90,46 @@ corner_radius_top_right = 8
 corner_radius_bottom_right = 8
 corner_radius_bottom_left = 8
 
+[sub_resource type="Animation" id="Animation_wb4bm"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_klt2p"]
+resource_name = "liquid_glow"
+length = 3.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("LiquidDisplay:modulate")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(1.1, 1.1, 1.1, 1), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hd87a"]
+_data = {
+&"RESET": SubResource("Animation_wb4bm"),
+&"liquid_glow": SubResource("Animation_klt2p")
+}
+
 [node name="Cauldron" type="Node2D"]
+script = ExtResource("1_qn3g0")
 
 [node name="CauldronBase" type="Sprite2D" parent="."]
 position = Vector2(586, 376)
@@ -136,17 +176,10 @@ one_shot = true
 volume_db = -10.0
 
 [node name="IngredientSlots" type="HBoxContainer" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 108.0
-offset_right = 272.0
-offset_bottom = 158.0
-grow_horizontal = 2
-grow_vertical = 0
+offset_left = 470.0
+offset_top = 310.0
+offset_right = 710.0
+offset_bottom = 360.0
 theme = ExtResource("4_abcde")
 alignment = 1
 
@@ -186,32 +219,18 @@ layout_mode = 2
 text = "Properties:"
 
 [node name="StirButton" type="Button" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
 offset_left = 441.0
 offset_top = 445.0
 offset_right = 541.0
 offset_bottom = 476.0
-grow_horizontal = 2
-grow_vertical = 0
 theme = ExtResource("4_abcde")
 text = "Stir"
 
 [node name="BrewButton" type="Button" parent="."]
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
 offset_left = 641.0
 offset_top = 445.0
 offset_right = 741.0
 offset_bottom = 476.0
-grow_horizontal = 2
-grow_vertical = 0
 theme = ExtResource("4_abcde")
 text = "Brew"
 
@@ -226,17 +245,10 @@ horizontal_alignment = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 visible = false
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
 offset_left = 490.0
-offset_top = 300.0
+offset_top = 400.0
 offset_right = 690.0
-offset_bottom = 310.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_bottom = 410.0
 theme = ExtResource("4_abcde")
 max_value = 1.0
 value = 0.5
@@ -283,4 +295,23 @@ layout_mode = 2
 size_flags_vertical = 3
 
 [node name="LiquidAnimation" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_hd87a")
+}
 autoplay = "liquid_glow"
+
+[node name="LiquidHighlight" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 540.0
+offset_top = 186.0
+offset_right = 640.0
+offset_bottom = 286.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(1, 1, 1, 0.0784314)

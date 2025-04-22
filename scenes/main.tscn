@@ -1,20 +1,23 @@
-[gd_scene load_steps=6 format=3 uid="uid://disk1657twksg"]
+[gd_scene load_steps=9 format=3 uid="uid://disk1657twksg"]
 
 [ext_resource type="Script" uid="uid://bt5e2f8exinnr" path="res://scenes/main.gd" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://debsygk02r42o" path="res://scenes/workshop/workshop.tscn" id="2_wsh23"]
+[ext_resource type="PackedScene" uid="uid://dx1dy6ui2fvx0" path="res://scenes/gathering/garden.tscn" id="3_fmebx"]
+[ext_resource type="PackedScene" uid="uid://o5ersrlm325s" path="res://scenes/ui/hud.tscn" id="4_qnbw2"]
 
 [sub_resource type="Animation" id="Animation_jyhfs"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("UILayer/ColorRect:modulate")
+tracks/0/path = NodePath("UILayer/TransitionRect:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Color(1, 1, 1, 1)]
+"values": [Color(1, 1, 1, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_0wfyh"]
@@ -23,7 +26,7 @@ length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("UILayer/ColorRect:modulate")
+tracks/0/path = NodePath("UILayer/TransitionRect:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -39,7 +42,7 @@ length = 0.5
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("UILayer/ColorRect:modulate")
+tracks/0/path = NodePath("UILayer/TransitionRect:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -59,30 +62,29 @@ _data = {
 [node name="Main" type="Node"]
 script = ExtResource("1_o5qli")
 
-[node name="Workshop" type="Node2D" parent="."]
+[node name="Workshop" parent="." instance=ExtResource("2_wsh23")]
 
 [node name="GatheringAreas" type="Node2D" parent="."]
 
-[node name="Garden" type="Node2D" parent="GatheringAreas"]
+[node name="Garden" parent="GatheringAreas" instance=ExtResource("3_fmebx")]
+visible = false
 
 [node name="ForestEdge" type="Node2D" parent="GatheringAreas"]
+visible = false
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 
-[node name="HUD" type="Control" parent="UILayer"]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="HUD" parent="UILayer" instance=ExtResource("4_qnbw2")]
 
-[node name="ColorRect" type="ColorRect" parent="UILayer"]
+[node name="TransitionRect" type="ColorRect" parent="UILayer"]
+modulate = Color(1, 1, 1, 0)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-color = Color(0.384354, 0.693497, 0.423027, 1)
+color = Color(0.0784314, 0.113725, 0.156863, 1)
 
 [node name="TransitionAnimator" type="AnimationPlayer" parent="."]
 libraries = {

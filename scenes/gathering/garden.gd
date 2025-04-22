@@ -6,7 +6,7 @@ signal resource_clicked(resource_id, node_id)
 signal area_entered
 
 # Exported variables
-@export var available_resources:  = [
+@export var available_resources: Array[String] = [
 	"ing_lavender", 
 	"ing_mint", 
 	"ing_sage", 
@@ -19,6 +19,7 @@ signal area_entered
 # Onready variables
 @onready var _resource_nodes = $ResourceNodes
 @onready var _spawn_points = $SpawnPoints
+@onready var _return_button = $ReturnButton
 
 # Private variables
 var _area_initialized = false
@@ -32,6 +33,10 @@ func _ready():
 	var gathering_system = get_node_or_null("/root/GatheringSystem")
 	if gathering_system and spawn_on_ready:
 		_initialize_with_gathering_system(gathering_system)
+	
+	# Connect return button
+	if _return_button:
+		_return_button.pressed.connect(_on_return_button_pressed)
 
 # Public methods
 func get_spawn_positions():
@@ -102,7 +107,7 @@ func _get_initial_resources(count):
 		var resource = resource_pool[index]
 		
 		resources.append(resource)
-		resource_pool.remove(index)
+		resource_pool.remove_at(index)
 		remaining -= 1
 	
 	return resources
@@ -120,3 +125,11 @@ func _on_resource_clicked(node_id):
 		var result = gathering_system.gather_resource(node_id)
 		if result.success:
 			resource_clicked.emit(result.resource_id, node_id)
+
+func _on_return_button_pressed():
+	"""Navigate back to the workshop when return button is pressed"""
+	var main_scene = get_node_or_null("/root/Main")
+	if main_scene and main_scene.has_method("_change_scene"):
+		main_scene._change_scene("workshop")
+	elif main_scene and main_scene.has_method("change_scene"):
+		main_scene.change_scene("workshop")

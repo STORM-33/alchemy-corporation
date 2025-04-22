@@ -7,6 +7,7 @@ extends Node
 @onready var _ui_layer = $UILayer
 @onready var _hud = $UILayer/HUD
 @onready var _transition_animator = $TransitionAnimator
+@onready var _transition_rect = $UILayer/TransitionRect
 
 # Private variables
 var _current_scene = "workshop"  # Current active scene
@@ -19,28 +20,17 @@ var _is_transitioning = false
 
 # Lifecycle methods
 func _ready():
+	# Make sure transition rect is invisible at start
+	if _transition_rect:
+		_transition_rect.modulate.a = 0
+	
 	# Store scene references
 	_scenes.workshop = $Workshop
 	_scenes.garden = $GatheringAreas/Garden
 	_scenes.forest_edge = $GatheringAreas/ForestEdge
 	
-	# Connect custom buttons in HUD for scene changes
-	# Note: We're connecting to individual buttons rather than a non-existent signal
-	if _hud:
-		if _hud.has_node("BottomBar/NavButtons/WorkshopButton"):
-			_hud.get_node("BottomBar/NavButtons/WorkshopButton").pressed.connect(
-				func(): _change_scene("workshop")
-			)
-		
-		if _hud.has_node("BottomBar/NavButtons/GardenButton"):
-			_hud.get_node("BottomBar/NavButtons/GardenButton").pressed.connect(
-				func(): _change_scene("garden")
-			)
-			
-		if _hud.has_node("BottomBar/NavButtons/ForestButton"):
-			_hud.get_node("BottomBar/NavButtons/ForestButton").pressed.connect(
-				func(): _change_scene("forest_edge")
-			)
+	# Connect HUD navigation buttons
+	_connect_navigation_buttons()
 	
 	# Set up initial scene
 	_update_visible_scene(_current_scene)
@@ -60,9 +50,29 @@ func get_current_scene() -> String:
 	return _current_scene
 
 # Private methods
+func _connect_navigation_buttons():
+	"""Connect HUD navigation buttons if they exist"""
+	if _hud:
+		var workshop_button = _hud.get_node_or_null("BottomBar/NavButtons/WorkshopButton")
+		var garden_button = _hud.get_node_or_null("BottomBar/NavButtons/GardenButton")
+		var forest_button = _hud.get_node_or_null("BottomBar/NavButtons/ForestButton")
+		
+		if workshop_button:
+			workshop_button.pressed.connect(func(): _change_scene("workshop"))
+		
+		if garden_button:
+			garden_button.pressed.connect(func(): _change_scene("garden"))
+		
+		if forest_button:
+			forest_button.pressed.connect(func(): _change_scene("forest_edge"))
+		
+		# Also connect to the scene_change_requested signal if it exists
+		if _hud.has_signal("scene_change_requested"):
+			_hud.scene_change_requested.connect(_change_scene)
+
 func _change_scene(scene_name: String) -> void:
 	"""Changes to the specified game scene"""
-	if _is_transitioning or not _scenes.has(scene_name):
+	if _is_transitioning or not _scenes.has(scene_name) or _current_scene == scene_name:
 		return
 	
 	_is_transitioning = true
