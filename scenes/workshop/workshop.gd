@@ -170,38 +170,18 @@ func _get_station_node(station_name):
 	return null
 
 func _on_brewing_started(recipe_id):
-	"""Handle brewing start from any station"""
-	var recipe_manager = get_node_or_null("/root/RecipeManager")
-	var recipe_name = "Unknown Recipe"
+	"""Handles brewing started from a station"""
+	var recipe_name = "Unknown Concoction"
 	
+	# Get recipe name if available
+	var recipe_manager = get_node_or_null("/root/RecipeManager")
 	if recipe_manager and recipe_id != "":
 		var recipe = recipe_manager.get_recipe(recipe_id)
 		if recipe:
 			recipe_name = recipe.name
 	
-	# Show notification
-	var notification_system = get_node_or_null("/root/NotificationSystem")
-	if notification_system:
-		notification_system.show_info("Brewing " + recipe_name + "...")
-	
 	brewing_started.emit(recipe_name)
 
 func _on_brewing_completed(potion_id, potion_name, quality):
-	"""Handle brewing completion from any station"""
-	# Format quality as percentage
-	var quality_percent = int(quality * 100)
-	var quality_text = ""
-	
-	if quality >= 1.5:
-		quality_text = "Excellent quality (" + str(quality_percent) + "%)"
-	elif quality >= 1.0:
-		quality_text = "Good quality (" + str(quality_percent) + "%)"
-	else:
-		quality_text = "Poor quality (" + str(quality_percent) + "%)"
-	
-	# Show notification
-	var notification_system = get_node_or_null("/root/NotificationSystem")
-	if notification_system:
-		notification_system.show_success("Created " + potion_name + "\n" + quality_text)
-	
+	"""Handles brewing completed from a station"""
 	brewing_completed.emit(potion_name, quality)

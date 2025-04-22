@@ -1,258 +1,281 @@
 extends Node
-## Main game management singleton that coordinates all game systems
-## Add this script to an autoload in the Project Settings
+## Main Game Manager handles global game state and systems
 
 # Signals
 signal game_initialized
-signal game_day_passed(day_number)
-signal game_saved
 signal game_loaded
+signal game_saved
+signal game_day_passed(day_number)
+signal gold_changed(new_amount)
+signal essence_changed(new_amount)
+signal experience_gained(amount)
+signal level_up(new_level)
 
-# Constants
-const SAVE_FILE_PATH = "user://alchemy_save.json"
-const VERSION = "0.0.1"
+# Game state
+var game_started: bool = false
+var current_day: int = 1
+var current_time: float = 8.0  # 8:00 AM in hours
+var time_scale: float = 1.0  # How fast time progresses
 
-# Game state variables
-var player_level = 1
-var player_gold = 0
-var player_essence = 0
-var player_knowledge_points = 0
-var current_game_day = 1
-var discovered_recipes = []
-var unlocked_stations = ["cauldron"]
-var station_levels = {"cauldron": 1}
-var specializations = {
+# Player resources
+var player_gold: int = 0
+var player_essence: int = 0
+var player_experience: int = 0
+var player_level: int = 1
+var experience_to_next_level: int = 100
+
+# Workshop state
+var unlocked_stations: Array = ["cauldron"]  # Start with just the cauldron
+var station_levels: Dictionary = {
+	"cauldron": 1,
+	"distillery": 1,
+	"herb_station": 1,
+	"study_table": 1
+}
+
+# Shop and other systems state
+var shop_unlocked: bool = false  # Fixed property
+
+# Specializations (0-20 scale)
+var specializations: Dictionary = {
 	"healing": 0,
-	"utility": 0, 
+	"utility": 0,
 	"transformation": 0,
 	"mind": 0
 }
 
-# Timer for auto-saving
-var _save_timer = null
+# Constructor
+func _init():
+	# Initialize any runtime variables here
+	pass
 
-# Systems references
-var inventory_manager = null
-var recipe_manager = null
-var villager_manager = null
-var brewing_system = null
-var gathering_system = null
-
-# Lifecycle methods
+# Called when the node enters the scene tree
 func _ready():
-	_initialize_game()
-	_setup_save_timer()
+	# Initialize time handling
+	var timer = Timer.new()
+	timer.wait_time = 5.0  # Check every 5 seconds
+	timer.autostart = true
+	timer.timeout.connect(_update_game_time)
+	add_child(timer)
+	
+	# Connect to signals from other systems using deferred connections
+	call_deferred("_connect_systems")
+	
+	# Debug: Print that GameManager is ready
+	print("GameManager initialized")
+
+# Process for updating time-based systems
+func _process(delta):
+	if game_started:
+		# Update game time
+		current_time += delta * time_scale / 300.0  # 1 real second = 12 in-game seconds (5 min per real hour)
+		
+		# Handle day change
+		if current_time >= 24.0:
+			current_time -= 24.0
+			current_day += 1
+			game_day_passed.emit(current_day)
 
 # Public methods
 func start_new_game():
 	"""Starts a new game with default values"""
-	player_level = 1
-	player_gold = 10  # Starting gold
+	# Reset game state
+	game_started = true
+	current_day = 1
+	current_time = 8.0
+	
+	# Reset player resources
+	player_gold = 10
 	player_essence = 0
-	player_knowledge_points = 0
-	current_game_day = 1
-	discovered_recipes = ["minor_healing_potion"]  # Start with one recipe
+	player_experience = 0
+	player_level = 1
+	experience_to_next_level = 100
+	
+	# Reset workshop
 	unlocked_stations = ["cauldron"]
-	station_levels = {"cauldron": 1}
+	station_levels = {
+		"cauldron": 1,
+		"distillery": 1,
+		"herb_station": 1,
+		"study_table": 1
+	}
+	
+	# Reset other systems
+	shop_unlocked = false
+	
+	# Reset specializations
 	specializations = {
 		"healing": 0,
-		"utility": 0, 
+		"utility": 0,
 		"transformation": 0,
 		"mind": 0
 	}
 	
+	# Initialize other systems
+	_initialize_systems()
+	
+	# Signal that a new game has started
 	game_initialized.emit()
-	save_game()
+	
+	return true
 
-func advance_game_day():
-	"""Advances the game by one day, triggering relevant events"""
-	current_game_day += 1
-	game_day_passed.emit(current_game_day)
+func load_game(save_data = null):
+	"""Loads game from save data or default if null"""
+	# If no save data, start a new game
+	if save_data == null:
+		return start_new_game()
 	
-	# Refresh daily activities, respawn resources, etc.
-	if gathering_system:
-		gathering_system.refresh_daily_resources()
+	# TODO: Implement proper save loading
+	game_started = true
 	
-	if villager_manager:
-		villager_manager.refresh_daily_orders()
+	# Signal that game was loaded
+	game_loaded.emit()
 	
-	save_game()
+	return true
 
+func save_game():
+	"""Saves the current game state"""
+	# TODO: Implement proper save system
+	var save_data = {
+		"current_day": current_day,
+		"current_time": current_time,
+		"player_gold": player_gold,
+		"player_essence": player_essence,
+		"player_experience": player_experience,
+		"player_level": player_level,
+		"unlocked_stations": unlocked_stations,
+		"station_levels": station_levels,
+		"specializations": specializations,
+		"shop_unlocked": shop_unlocked
+	}
+	
+	# Signal that game was saved
+	game_saved.emit()
+	
+	return save_data
+
+# Resource management
 func add_gold(amount):
 	"""Adds gold to the player's inventory"""
 	player_gold += amount
-	save_game()
+	gold_changed.emit(player_gold)
 	return player_gold
 
-func spend_gold(amount):
-	"""Tries to spend gold from player's inventory"""
+func remove_gold(amount):
+	"""Removes gold from the player's inventory if possible"""
 	if player_gold >= amount:
 		player_gold -= amount
-		save_game()
+		gold_changed.emit(player_gold)
 		return true
 	return false
 
 func add_essence(amount):
-	"""Adds alchemical essence to the player's inventory"""
+	"""Adds essence to the player's inventory"""
 	player_essence += amount
-	save_game()
+	essence_changed.emit(player_essence)
 	return player_essence
 
-func spend_essence(amount):
-	"""Tries to spend essence from player's inventory"""
+func remove_essence(amount):
+	"""Removes essence from the player's inventory if possible"""
 	if player_essence >= amount:
 		player_essence -= amount
-		save_game()
+		essence_changed.emit(player_essence)
 		return true
 	return false
 
-func discover_recipe(recipe_id):
-	"""Marks a recipe as discovered"""
-	if recipe_id not in discovered_recipes:
-		discovered_recipes.append(recipe_id)
-		save_game()
-		return true
-	return false
+func add_experience(amount):
+	"""Adds experience and handles leveling up"""
+	player_experience += amount
+	experience_gained.emit(amount)
+	
+	# Check for level up
+	if player_experience >= experience_to_next_level:
+		player_experience -= experience_to_next_level
+		player_level += 1
+		experience_to_next_level = _calculate_next_level_exp(player_level)
+		level_up.emit(player_level)
+	
+	return player_experience
 
-func add_specialization_point(specialization_type):
-	"""Adds a point to the specified specialization path"""
-	if specialization_type in specializations:
-		specializations[specialization_type] += 1
-		save_game()
-		return true
-	return false
-
-func unlock_station(station_id):
+# Workshop management
+func unlock_station(station_name):
 	"""Unlocks a new workshop station"""
-	if station_id not in unlocked_stations:
-		unlocked_stations.append(station_id)
-		station_levels[station_id] = 1
-		save_game()
-		return true
-	return false
+	if station_name in unlocked_stations:
+		return false
+	
+	unlocked_stations.append(station_name)
+	return true
 
-func upgrade_station(station_id):
+func upgrade_station(station_name):
 	"""Upgrades a workshop station level"""
-	if station_id in station_levels:
-		station_levels[station_id] += 1
-		save_game()
-		return true
-	return false
+	if not (station_name in station_levels):
+		return false
+	
+	station_levels[station_name] += 1
+	return true
 
-func save_game():
-	"""Saves the game state to a file"""
-	var save_data = {
-		"version": VERSION,
-		"player_level": player_level,
-		"player_gold": player_gold,
-		"player_essence": player_essence,
-		"player_knowledge_points": player_knowledge_points,
-		"current_game_day": current_game_day,
-		"discovered_recipes": discovered_recipes,
-		"unlocked_stations": unlocked_stations,
-		"station_levels": station_levels,
-		"specializations": specializations,
-		"timestamp": Time.get_unix_time_from_system()
-	}
-	
-	# Save inventory, if initialized
-	if inventory_manager:
-		save_data["inventory"] = inventory_manager.get_save_data()
-	
-	# Save villager data, if initialized
-	if villager_manager:
-		save_data["villagers"] = villager_manager.get_save_data()
-	
-	# Save recipe data, if initialized
-	if recipe_manager:
-		save_data["recipes"] = recipe_manager.get_save_data()
-	
-	# Create save file
-	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.WRITE)
-	if file:
-		file.store_string(JSON.stringify(save_data, "  "))
-		file.close()
-		
-		game_saved.emit()
-		return true
-	return false
-
-func load_game():
-	"""Loads the game state from a file"""
-	if not FileAccess.file_exists(SAVE_FILE_PATH):
+# Shop management
+func unlock_shop():
+	"""Unlocks the shop for the player"""
+	if shop_unlocked:
 		return false
 	
-	var file = FileAccess.open(SAVE_FILE_PATH, FileAccess.READ)
-	if not file:
-		return false
-		
-	var json_string = file.get_as_text()
-	file.close()
-	
-	var json = JSON.new()
-	var error = json.parse(json_string)
-	
-	if error != OK:
-		return false
-	
-	var save_data = json.get_data()
-	
-	# Load basic player data
-	player_level = save_data.get("player_level", 1)
-	player_gold = save_data.get("player_gold", 0)
-	player_essence = save_data.get("player_essence", 0)
-	player_knowledge_points = save_data.get("player_knowledge_points", 0)
-	current_game_day = save_data.get("current_game_day", 1)
-	discovered_recipes = save_data.get("discovered_recipes", [])
-	unlocked_stations = save_data.get("unlocked_stations", ["cauldron"])
-	station_levels = save_data.get("station_levels", {"cauldron": 1})
-	specializations = save_data.get("specializations", {
-		"healing": 0,
-		"utility": 0, 
-		"transformation": 0,
-		"mind": 0
-	})
-	
-	# Load additional system data
-	if inventory_manager and save_data.has("inventory"):
-		inventory_manager.load_save_data(save_data["inventory"])
-	
-	if villager_manager and save_data.has("villagers"):
-		villager_manager.load_save_data(save_data["villagers"])
-	
-	if recipe_manager and save_data.has("recipes"):
-		recipe_manager.load_save_data(save_data["recipes"])
-	
-	game_loaded.emit()
+	shop_unlocked = true
 	return true
 
 # Private methods
-func _initialize_game():
-	"""Initialize the game state"""
-	# Check for existing save
-	if FileAccess.file_exists(SAVE_FILE_PATH):
-		load_game()
+func _connect_systems():
+	"""Connects to other autoloaded systems"""
+	# Use get_node_or_null to safely get references when needed
+	var inventory_system = get_node_or_null("/root/InventoryManager")
+	if inventory_system and inventory_system.has_signal("inventory_full"):
+		inventory_system.inventory_full.connect(_on_inventory_full)
+
+func _initialize_systems():
+	"""Initialize other game systems when starting a new game"""
+	# Initialize gathering system
+	var gathering_system = get_node_or_null("/root/GatheringSystem")
+	if gathering_system and gathering_system.has_method("refresh_daily_resources"):
+		gathering_system.refresh_daily_resources()
+	
+	# Initialize weather system
+	var weather_system = get_node_or_null("/root/WeatherSystem")
+	if weather_system and weather_system.has_method("initialize_weather"):
+		weather_system.initialize_weather()
+	
+	# Initialize any other systems that need starting state
+	# - Important: DON'T store references, just call methods
+
+func _update_game_time():
+	"""Regular update for time-based systems"""
+	if not game_started:
+		return
+	
+	# Update gathering system if it exists
+	var gathering_system = get_node_or_null("/root/GatheringSystem")
+	if gathering_system and gathering_system.has_method("update_resources"):
+		gathering_system.update_resources()
+	
+	# Update weather system if it exists
+	var weather_system = get_node_or_null("/root/WeatherSystem") 
+	if weather_system and weather_system.has_method("update_weather"):
+		weather_system.update_weather(current_time)
+		
+	# Update villager orders if needed
+	var villager_order_system = get_node_or_null("/root/VillagerOrderSystem")
+	if villager_order_system and villager_order_system.has_method("update_orders"):
+		villager_order_system.update_orders()
+
+func _calculate_next_level_exp(level):
+	"""Calculates experience needed for the next level"""
+	# Simple formula: base 100 + 50 per level
+	return 100 + (level * 50)
+
+func _on_inventory_full():
+	"""Handler for inventory full signal"""
+	# Use get_node_or_null instead of storing references to avoid invalid assignments
+	var notification_system = get_node_or_null("/root/NotificationSystem")
+	if notification_system and notification_system.has_method("show_warning"):
+		notification_system.show_warning("Inventory is full!")
 	else:
-		start_new_game()
-
-func _setup_save_timer():
-	"""Sets up automatic saving every few minutes"""
-	_save_timer = Timer.new()
-	_save_timer.wait_time = 300  # Save every 5 minutes
-	_save_timer.one_shot = false
-	_save_timer.timeout.connect(_on_save_timer_timeout)
-	add_child(_save_timer)
-	_save_timer.start()
-
-func _on_save_timer_timeout():
-	"""Called when the save timer expires"""
-	save_game()
-
-func _notification(what):
-	"""Handle notifications like app going to background"""
-	if what == NOTIFICATION_WM_CLOSE_REQUEST:
-		# Game is being closed
-		save_game()
-	elif what == NOTIFICATION_APPLICATION_FOCUS_OUT:
-		# Game lost focus (e.g., app went to background)
-		save_game()
+		print("Inventory is full!") # Fallback when notification system not available
